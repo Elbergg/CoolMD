@@ -20,16 +20,23 @@ struct Token *fragmentize(char *block) {
 }
 
 
+regmatch_t *find_matches(char *pattern, char *text) {
+    regex_t regex;
+    int val = regcomp(&regex, pattern, 0);
+    regmatch_t *underscore_matches = malloc(strlen(text));
+    if (regexec(&regex, text, strlen(text), underscore_matches, 0)) {
+        printf("regexec failed\n");
+    }
+    return underscore_matches;
+}
+
+
 struct Token *tokenize(char *text) {
     struct Token *tokens;
     int array_size = 0;
-    regex_t regex;
-    int underscore = regcomp(&regex, "[_]", 0);
-    regmatch_t *matches = malloc(strlen(text));
-    if (regexec(&regex, text, 2, matches, 0)) {
-        printf("regexec failed\n");
-    } else {
-        realloc(tokens, array_size + sizeof(struct Token) *);
-    }
+    int array_index = 0;
+    regmatch_t *underscore_matches = find_matches("[_]", text);
+    regmatch_t *star_matches = find_matches("[*]", text);
+    regmatch_t *text_matches = find_matches("[^_*]+", text);
     return 0;
 }
