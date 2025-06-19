@@ -2,8 +2,13 @@
 // Created by tomps on 19/06/2025.
 //
 
+
 #ifndef TOKENIZER_H
 #define TOKENIZER_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum tokenType {
     UNDERSCORE,
@@ -14,11 +19,21 @@ enum tokenType {
 };
 
 struct Token {
-    tokenType type;
-    char* value;
+    enum tokenType type;
+    char *value;
 };
 
-Token* tokenize(const char* str);
+struct Token *tokenize(char *str);
+
+struct Token *blockerize(char *str);
+
+struct Token *fragmentize(char *str);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
 
 
-#endif //TOKENIZER_H
+
