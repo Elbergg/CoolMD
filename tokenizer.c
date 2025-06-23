@@ -43,9 +43,10 @@ regmatch_t *extract_text_tokens(regmatch_t **prev_matches, int types_num, char *
     size_t bytes_needed = (strlen(text) + 7) / 8;
     uint8_t *bitmask = calloc(bytes_needed, sizeof(uint8_t));
     for (int i = 0; i < types_num; i++) {
-        while (prev_matches[i]->rm_so != -1) {
+        int k = 0;
+        while (prev_matches[i][k].rm_so != -1) {
             int j = 0;
-            while (prev_matches[i]->rm_eo - j++ != prev_matches[i]->rm_so) {
+            while (prev_matches[i][k].rm_eo - j++ != prev_matches[i][k].rm_so) {
                 *bitmask = *bitmask | 1 << prev_matches[i]->rm_so;
             }
         }
@@ -60,7 +61,7 @@ struct Token *tokenize(char *text) {
     int array_index = 0;
     regmatch_t *underscore_matches = find_matches("[_]", text);
     regmatch_t *star_matches = find_matches("[*]", text);
-
-    regmatch_t *text_matches = extract_text_matches(underscore_matche);
+    regmatch_t **previous_matches = malloc(2);
+    regmatch_t *text_matches = extract_text_tokens(previous_matches, 2, text);
     return 0;
 }
