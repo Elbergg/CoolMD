@@ -5,7 +5,7 @@
 #include "tokenizer.h"
 
 TEST(TokenizerTests, BasicTest) {
-    char text[] = "_Hello*";
+    char text[] = "_Hello***";
     Token *tokens = tokenize(text);
     ASSERT_EQ(tokens[0].type, UNDERSCORE);
     ASSERT_EQ(tokens[1].type, TEXT);
