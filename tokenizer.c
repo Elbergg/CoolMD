@@ -92,6 +92,15 @@ struct ptarrayInfo *extract_text_tokens(struct ptarrayInfo **prev_matches, int t
             addToPreTokenArray(array, &pt);
         }
     }
+    if (token) {
+        token = 0;
+        char *value = malloc(strlen(text) - start + 1);
+        strncpy(value, &text[start], strlen(text) - start);
+        value[strlen(text) - start] = '\0';
+        struct preToken pt = {start, strlen(text), {TEXT, value}};
+        addToPreTokenArray(array, &pt);
+    }
+
 
     return array;
 }
