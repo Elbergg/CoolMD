@@ -49,9 +49,8 @@ void addToPreTokenArray(struct ptarrayInfo *info, struct preToken *token) {
         info->capacity *= 2;
 
         realloc(info->data, info->capacity * sizeof(struct preToken));
-    } else {
-        info->data[info->elements] = *token;
     }
+    info->data[info->elements] = *token;
     info->elements++;
 }
 
