@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "merge.h"
 
 struct Token *blockerize(char *text) {
     char *block = strtok(text, "\n\n");
@@ -21,19 +21,6 @@ struct Token *fragmentize(char *block) {
 }
 
 
-struct preToken {
-    int start;
-    int end;
-    struct Token token;
-};
-
-
-struct ptarrayInfo {
-    int capacity;
-    int elements;
-    struct preToken *data;
-};
-
 struct ptarrayInfo *createPreTokenArray(int capacity) {
     struct preToken *tokens = malloc(sizeof(struct preToken) * capacity);
     struct ptarrayInfo *info = malloc(sizeof(struct ptarrayInfo));
@@ -41,6 +28,26 @@ struct ptarrayInfo *createPreTokenArray(int capacity) {
     info->elements = 0;
     info->data = tokens;
     return info;
+}
+
+
+struct tarrayInfo *createTokenArray(int capacity) {
+    struct Token *tokens = malloc(sizeof(struct preToken) * capacity);
+    struct tarrayInfo *info = malloc(sizeof(struct ptarrayInfo));
+    info->capacity = capacity;
+    info->elements = 0;
+    info->data = tokens;
+    return info;
+}
+
+void addToTokenArray(struct tarrayInfo *info, struct Token *token) {
+    if (info->capacity - info->elements < 1) {
+        info->capacity *= 2;
+
+        realloc(info->data, info->capacity * sizeof(struct preToken));
+    }
+    info->data[info->elements] = *token;
+    info->elements++;
 }
 
 
@@ -56,7 +63,6 @@ void addToPreTokenArray(struct ptarrayInfo *info, struct preToken *token) {
 
 struct ptarrayInfo *extract_text_tokens(struct ptarrayInfo **prev_matches, int types_num, char *text) {
     char *bitmask = calloc(strlen(text), sizeof(char));
-
     for (int i = 0; i < types_num; i++) {
         int k = 0;
         while (k < prev_matches[i]->elements) {
@@ -111,6 +117,29 @@ struct ptarrayInfo *find_matches(char *pattern, char *text, enum tokenType type)
 }
 
 
+struct Token *sort_tokens(struct ptarrayInfo **pretokens, int n) {
+    int size = 0;
+    for (int i = 0; i < n; i++) {
+        size += pretokens[i]->elements;
+    }
+    struct preToken *res = malloc(sizeof(struct preToken) * size);
+    int i = 0;
+    int cur = 0;
+    do {
+        memcpy(res + cur, pretokens[i]->data, pretokens[i]->elements * sizeof(struct preToken));
+        cur += pretokens[i]->elements;
+        i++;
+    } while (i < n);
+    mergeSort(res, 0, size - 1);
+    struct Token *res_tokens = malloc(sizeof(struct Token) * size);
+    for (int i = 0; i < size; i++) {
+        res_tokens[i] = res[i].token;
+    }
+    free(res);
+    return res_tokens;
+}
+
+
 struct Token *tokenize(char *text) {
     struct Token *tokens;
     int array_size = 0;
@@ -121,5 +150,10 @@ struct Token *tokenize(char *text) {
     previous_matches[0] = underscore_matches;
     previous_matches[1] = star_matches;
     struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 2, text);
-    return 0;
+    struct ptarrayInfo **all_matches = malloc(3);
+    all_matches[0] = underscore_matches;
+    all_matches[1] = star_matches;
+    all_matches[2] = text_matches;
+    struct Token *sorted_tokens = sort_tokens(all_matches, 3);
+    return sorted_tokens;
 }

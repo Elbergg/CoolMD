@@ -23,6 +23,26 @@ struct Token {
     char *value;
 };
 
+struct preToken {
+    int start;
+    int end;
+    struct Token token;
+};
+
+
+struct tarrayInfo {
+    int capacity;
+    int elements;
+    struct Token *data;
+};
+
+
+struct ptarrayInfo {
+    int capacity;
+    int elements;
+    struct preToken *data;
+};
+
 struct Token *tokenize(char *str);
 
 struct Token *blockerize(char *str);

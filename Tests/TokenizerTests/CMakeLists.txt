@@ -1,4 +1,6 @@
-add_executable(tokenizertest TokenizerTests.cpp)
+add_executable(tokenizertest TokenizerTests.cpp
+        ../../merge.c
+        ../../merge.h)
 
 # Link against Google Test and your library
 target_link_libraries(tokenizertest

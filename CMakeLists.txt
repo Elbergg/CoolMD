@@ -17,6 +17,8 @@ FetchContent_MakeAvailable(googletest)
 add_library(coolmd STATIC
         tokenizer.h
         tokenizer.c
+        merge.c
+        merge.h
 
 )
 

@@ -10,5 +10,5 @@ TEST(TokenizerTests, BasicTest) {
     ASSERT_EQ(tokens[0].type, UNDERSCORE);
     ASSERT_EQ(tokens[1].type, TEXT);
     ASSERT_EQ(tokens[2].type, STAR);
-    ASSERT_EQ(tokens[1].value, "Hello");
+    ASSERT_TRUE(strcmp(tokens[1].value, "Hello") == 0);
 }
