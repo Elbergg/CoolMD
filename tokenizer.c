@@ -47,23 +47,27 @@ struct ptarrayInfo *createPreTokenArray(int capacity) {
 void addToPreTokenArray(struct ptarrayInfo *info, struct preToken *token) {
     if (info->capacity - info->elements < 1) {
         info->capacity *= 2;
+
         realloc(info->data, info->capacity * sizeof(struct preToken));
     } else {
         info->data[info->elements] = *token;
     }
+    info->elements++;
 }
 
-struct ptarrayInfo *extract_text_tokens(regmatch_t **prev_matches, int types_num, char *text) {
+struct ptarrayInfo *extract_text_tokens(struct ptarrayInfo **prev_matches, int types_num, char *text) {
     char *bitmask = calloc(strlen(text), sizeof(char));
-    int pos = 0;
+
     for (int i = 0; i < types_num; i++) {
         int k = 0;
-        while (prev_matches[i][k].rm_so != -1) {
+        while (k < prev_matches[i]->elements) {
             int j = 0;
-            while (prev_matches[i][k].rm_eo - j++ != prev_matches[i][k].rm_so) {
+            int pos = prev_matches[i]->data[k].start;
+            while (prev_matches[i]->data[k].end - j++ != prev_matches[i]->data[k].start) {
                 bitmask[pos] = 1;
                 pos++;
             }
+            k++;
         }
     }
     int start = 0;
@@ -73,11 +77,9 @@ struct ptarrayInfo *extract_text_tokens(regmatch_t **prev_matches, int types_num
         if (!bitmask[i] && !token) {
             token = 1;
             start = i;
-            i++;
         } else if (!bitmask[i] && token) {
-            i++;
         } else if (bitmask[i] && token) {
-            i++;
+            token = 0;
             char *value = malloc(i - start + 1);
             strncpy(value, &text[start], i - start);
             value[i - start] = '\0';
@@ -89,12 +91,11 @@ struct ptarrayInfo *extract_text_tokens(regmatch_t **prev_matches, int types_num
     return array;
 }
 
-struct preToken *find_matches(char *pattern, char *text) {
+struct ptarrayInfo *find_matches(char *pattern, char *text, enum tokenType type) {
     regex_t regex;
     int val = regcomp(&regex, pattern, 0);
     regmatch_t *matches = malloc(strlen(text) * sizeof(regmatch_t));
-    struct
-    preToken *ptokens = cre
+    struct ptarrayInfo *ptokens = createPreTokenArray(10);
     int i = 0;
     char *start = text;
     int pos = 0;
@@ -102,10 +103,12 @@ struct preToken *find_matches(char *pattern, char *text) {
         pos = matches[i].rm_eo + pos;
         matches[i].rm_so = pos - 1;
         matches[i].rm_eo = pos;
+        struct preToken pt = {matches[i].rm_so, matches[i].rm_eo, {type, ""}};
+        addToPreTokenArray(ptokens, &pt);
         i++;
         start = &text[pos];
     }
-    return matches;
+    return ptokens;
 }
 
 
@@ -113,9 +116,11 @@ struct Token *tokenize(char *text) {
     struct Token *tokens;
     int array_size = 0;
     int array_index = 0;
-    struct preToken *underscore_matches = find_matches("[_]", text);
-    struct preToken *star_matches = find_matches("[*]", text);
-    struct preToken **previous_matches = malloc(2);
-    struct preToken *text_matches = extract_text_tokens(previous_matches, 2, text);
+    struct ptarrayInfo *underscore_matches = find_matches("[_]", text, UNDERSCORE);
+    struct ptarrayInfo *star_matches = find_matches("[*]", text, STAR);
+    struct ptarrayInfo **previous_matches = malloc(2);
+    previous_matches[0] = underscore_matches;
+    previous_matches[1] = star_matches;
+    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 2, text);
     return 0;
 }
