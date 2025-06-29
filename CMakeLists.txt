@@ -21,7 +21,6 @@ add_library(coolmd STATIC
         merge.h
         parser.h
         parser.c
-
 )
 
 # Make headers available to other targets
