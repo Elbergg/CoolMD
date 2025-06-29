@@ -19,6 +19,8 @@ add_library(coolmd STATIC
         tokenizer.c
         merge.c
         merge.h
+        parser.h
+        parser.c
 
 )
 
