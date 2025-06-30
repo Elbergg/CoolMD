@@ -12,13 +12,90 @@ void parse_terminals(struct Token * tokens, int index, int length, struct narray
             case TEXTNODE:
                 i = parse_text(tokens, i, length, nodes);
                 break;
+            case NEWLINE:
+                i = parse_newline(tokens, i, length, nodes);
+                break;
             default: ;
         }
     }
 }
 
-void parse_non_terminals(struct narrayInfo* nodes) {
+int parse_newline(struct Token* tokens, int index, int length, struct narrayInfo * nodes) {
+    if (index + 1 <= length && tokens[index + 1].type == NEWLINE) {
+        struct Node* node = malloc(sizeof(struct Node));
+        node->type = DNL;
+        node->value = "\n\n";
+        addToNodeArray(nodes, node);
+        return index + 2;
+    }
+    else {
+        struct Node* node = malloc(sizeof(struct Node));
+        node->type = TEXTNODE;
+        node->value = "\n";
+        addToNodeArray(nodes, node);
+        return index + 1;
+    }
+}
 
+void parse_non_terminals(struct narrayInfo* nodes) {
+    parse_sentences(nodes);
+    parse_paragraphs(nodes);
+}
+
+void parse_paragraphs(struct narrayInfo* nodes) {
+    for (int i = 0; i < nodes->elements; i++) {
+
+    }
+}
+
+struct narrayInfo* parse(struct Token * tokens, int index, int length) {
+    struct narrayInfo* node = createNodeArray(1);
+    struct Node* head = malloc(sizeof(struct Node));
+    head->type = BODY;
+    head->children = createNodeArray(10);
+    addToNodeArray(node, head);
+
+    parse_terminals(tokens, index, length, node->data[0].children);
+    parse_non_terminals(node);
+    return node;
+}
+
+
+
+void parse_sentences(struct narrayInfo* nodes) {
+    struct narrayInfo* info = createNodeArray(10);
+    char sentence = 0;
+    struct narrayInfo* candidates = nodes->data[0].children;
+    struct Node* sentnode;
+    char added = 0;
+    sentnode = malloc(sizeof(struct Node));
+    sentnode->type = SENTENCE;
+    for (int i = 0; i < candidates->elements; i++) {
+        if ((candidates->data[i].type == EMPHASIS || candidates->data[i].type == TEXTNODE || candidates->data[i].type == BOLD) && sentence == 0) {
+            sentence = 1;
+            added = 1;
+            sentnode = malloc(sizeof(struct Node));
+            sentnode->type = SENTENCE;
+            sentnode->children = createNodeArray(10);
+            addToNodeArray(sentnode->children, &candidates->data[i]);
+            addToNodeArray(info, sentnode);
+        }
+        else if ((candidates->data[i].type == EMPHASIS || candidates->data[i].type == TEXTNODE || candidates->data[i].type == BOLD) && sentence == 1){
+            addToNodeArray(sentnode->children, &candidates->data[i]);
+        }
+        else {
+            sentence = 0;
+            addToNodeArray(info, &candidates->data[i]);
+        }
+    }
+    if (added) {
+        free(nodes->data[0].children);
+        nodes->data[0].children = info;
+    }
+    else {
+        free(info);
+        free(sentnode);
+    }
 }
 
 
@@ -81,7 +158,7 @@ int parse_one_underscore(struct Token* tokens, int index, int length, struct nar
         tokens[last].parsed = 1;
         node->children = createNodeArray(10);
         addToNodeArray(nodes, node);
-        parse(tokens, index + 1, last, node->children);
+        parse_terminals(tokens, index + 1, last, node->children);
         return last;
     }
     else {
