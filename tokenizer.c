@@ -32,8 +32,8 @@ struct ptarrayInfo *createPreTokenArray(int capacity) {
 
 
 struct tarrayInfo *createTokenArray(int capacity) {
-    struct Token *tokens = malloc(sizeof(struct preToken) * capacity);
-    struct tarrayInfo *info = malloc(sizeof(struct ptarrayInfo));
+    struct Token *tokens = malloc(sizeof(struct Token) * capacity);
+    struct tarrayInfo *info = malloc(sizeof(struct tarrayInfo));
     info->capacity = capacity;
     info->elements = 0;
     info->data = tokens;
@@ -44,7 +44,7 @@ void addToTokenArray(struct tarrayInfo *info, struct Token *token) {
     if (info->capacity - info->elements < 1) {
         info->capacity *= 2;
 
-        realloc(info->data, info->capacity * sizeof(struct preToken));
+        info->data =realloc(info->data, info->capacity * sizeof(struct Token));
     }
     info->data[info->elements] = *token;
     info->elements++;
@@ -55,7 +55,7 @@ void addToPreTokenArray(struct ptarrayInfo *info, struct preToken *token) {
     if (info->capacity - info->elements < 1) {
         info->capacity *= 2;
 
-        realloc(info->data, info->capacity * sizeof(struct preToken));
+        info->data = realloc(info->data, info->capacity * sizeof(struct preToken));
     }
     info->data[info->elements] = *token;
     info->elements++;
@@ -143,6 +143,7 @@ struct Token *sort_tokens(struct ptarrayInfo **pretokens, int n) {
     struct Token *res_tokens = malloc(sizeof(struct Token) * size);
     for (int i = 0; i < size; i++) {
         res_tokens[i] = res[i].token;
+        res_tokens[i].parsed = 0;
     }
     free(res);
     return res_tokens;

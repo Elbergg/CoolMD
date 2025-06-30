@@ -15,12 +15,12 @@ FetchContent_MakeAvailable(googletest)
 
 # Create your library (remove test files from here)
 add_library(coolmd STATIC
+        parser.h
+        parser.c
         tokenizer.h
         tokenizer.c
         merge.c
         merge.h
-        parser.h
-        parser.c
 )
 
 # Make headers available to other targets

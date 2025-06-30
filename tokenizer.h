@@ -21,6 +21,7 @@ enum tokenType {
 struct Token {
     enum tokenType type;
     char *value;
+    char parsed ;
 };
 
 struct preToken {
@@ -48,6 +49,7 @@ struct Token *tokenize(char *str);
 struct Token *blockerize(char *str);
 
 struct Token *fragmentize(char *str);
+
 
 #ifdef __cplusplus
 }
