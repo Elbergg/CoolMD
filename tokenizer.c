@@ -6,12 +6,12 @@
 #include <string.h>
 #include "merge.h"
 
-struct Token *blockerize(char *text) {
-    char *block = strtok(text, "\n\n");
-    while (block != NULL) {
-        struct Token *tokens = tokenize(block);
-    }
-}
+// struct Token *blockerize(char *text) {
+//     char *block = strtok(text, "\n\n");
+//     while (block != NULL) {
+//         struct Token *tokens = tokenize(block);
+//     }
+// }
 
 // struct Token *fragmentize(char *block) {
 //     char *fragment = strtok(block, "\n");
@@ -101,7 +101,7 @@ struct ptarrayInfo *extract_text_tokens(struct ptarrayInfo **prev_matches, int t
         addToPreTokenArray(array, &pt);
     }
 
-
+    free(bitmask);
     return array;
 }
 
@@ -122,11 +122,12 @@ struct ptarrayInfo *find_matches(char *pattern, char *text, enum tokenType type)
         i++;
         start = &text[pos];
     }
+    free(matches);
     return ptokens;
 }
 
 
-struct Token *sort_tokens(struct ptarrayInfo **pretokens, int n) {
+struct tarrayInfo *sort_tokens(struct ptarrayInfo **pretokens, int n) {
     int size = 0;
     for (int i = 0; i < n; i++) {
         size += pretokens[i]->elements;
@@ -157,14 +158,17 @@ struct tarrayInfo *tokenize(char *text) {
     int array_index = 0;
     struct ptarrayInfo *underscore_matches = find_matches("[_]", text, UNDERSCORE);
     struct ptarrayInfo *star_matches = find_matches("[*]", text, STAR);
-    struct ptarrayInfo **previous_matches = malloc(2);
+    struct ptarrayInfo *newlines = find_matches("[\n]", text, NEWLINE);
+    struct ptarrayInfo **previous_matches = malloc(3);
     previous_matches[0] = underscore_matches;
     previous_matches[1] = star_matches;
-    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 2, text);
-    struct ptarrayInfo **all_matches = malloc(3);
+    previous_matches[2] = newlines;
+    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 3, text);
+    struct ptarrayInfo **all_matches = malloc(4);
     all_matches[0] = underscore_matches;
     all_matches[1] = star_matches;
     all_matches[2] = text_matches;
-    struct Token *sorted_tokens = sort_tokens(all_matches, 3);
+    all_matches[3] = newlines;
+    struct tarrayInfo *sorted_tokens = sort_tokens(all_matches, 4);
     return sorted_tokens;
 }

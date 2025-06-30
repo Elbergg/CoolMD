@@ -46,7 +46,7 @@ struct ptarrayInfo {
 
 struct tarrayInfo *tokenize(char *str);
 
-struct Token *blockerize(char *str);
+// struct Token *blockerize(char *str);
 
 // struct Token *fragmentize(char *str);
 

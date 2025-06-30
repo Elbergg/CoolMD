@@ -3,7 +3,7 @@
 //
 #include "parser.h"
 
-void parse(struct Token * tokens, int index, int length, struct narrayInfo * nodes) {
+void parse_terminals(struct Token * tokens, int index, int length, struct narrayInfo * nodes) {
     for (int i = index; i <= length; i++) {
         switch (tokens[i].type) {
             case UNDERSCORE:
@@ -16,6 +16,12 @@ void parse(struct Token * tokens, int index, int length, struct narrayInfo * nod
         }
     }
 }
+
+void parse_non_terminals(struct narrayInfo* nodes) {
+
+}
+
+
 int parse_underscores(struct Token* tokens, int index, int length, struct narrayInfo * nodes) {
     if (index + 1 < length && tokens[index + 1].type == UNDERSCORE && index + 2 < length && tokens[index + 2].type == UNDERSCORE) {
         return parse_three_underscores(tokens, index, length, nodes);

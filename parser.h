@@ -31,7 +31,7 @@ extern "C" {
         struct Node *data;
     };
 
-    void parse(struct Token * tokens, int index, int length, struct narrayInfo * nodes);
+    void parse_terminals(struct Token * tokens, int index, int length, struct narrayInfo * nodes);
     int parse_text(struct Token* tokens, int index, int length, struct narrayInfo* nodes);
     struct narrayInfo *createNodeArray(int capacity);
     int parse_underscores(struct Token * tokens, int index, int length, struct narrayInfo * nodes);
