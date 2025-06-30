@@ -4,13 +4,13 @@
 #include "parser.h"
 
 void parse(struct Token * tokens, int index, int length, struct narrayInfo * nodes) {
-    for (int i = index; i < length; i++) {
-        switch (tokens[index].type) {
+    for (int i = index; i <= length; i++) {
+        switch (tokens[i].type) {
             case UNDERSCORE:
-                i = parse_underscores(tokens, index, length, nodes);
+                i = parse_underscores(tokens, i, length, nodes);
                 break;
             case TEXTNODE:
-                i = parse_text(tokens, index, length, nodes);
+                i = parse_text(tokens, i, length, nodes);
                 break;
             default: ;
         }
@@ -53,28 +53,38 @@ int parse_three_underscores(struct Token* tokens, int index, int length, struct 
 int parse_one_underscore(struct Token* tokens, int index, int length, struct narrayInfo* nodes) {
     int last =  0;
     char found = 0;
+    struct Node* node = malloc(sizeof(struct Node));
     for (int i = index+1; i <= length; i++) {
         if (tokens[i].type == UNDERSCORE && !tokens[i].parsed) {
             found = 1;
             last = i;
+            break;
         }
     }
     if (!found) {
-        tokens[index].type = TEXTNODE;
-        tokens[index].value = "_";
+        node->type = TEXTNODE;
+        node->value = "_";
+        tokens[index].parsed = 1;
+        addToNodeArray(nodes, node);
         return length;
     }
-    else {
-        struct Node* node = malloc(sizeof(struct Node));
+    if (index + 1 != last){
+        // struct Node* node = malloc(sizeof(struct Node));
         node->type = EMPHASIS;
         tokens[index].parsed = 1;
         tokens[last].parsed = 1;
         node->children = createNodeArray(10);
         addToNodeArray(nodes, node);
-        if (index + 1 != last) {
-            parse(tokens, index + 1, last, node->children);
-            return last;
-        }
+        parse(tokens, index + 1, last, node->children);
+        return last;
+    }
+    else {
+        node->type = TEXTNODE;
+        node->value = "__";
+        tokens[index].parsed = 1;
+        tokens[last].parsed = 1;
+        addToNodeArray(nodes, node);
+        return last;
     }
 }
 
