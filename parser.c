@@ -4,7 +4,7 @@
 #include "parser.h"
 
 void parse_terminals(struct Token * tokens, int index, int length, struct narrayInfo * nodes) {
-    for (int i = index; i <= length; i++) {
+    for (int i = index; i < length; i++) {
         switch (tokens[i].type) {
             case UNDERSCORE:
                 i = parse_underscores(tokens, i, length, nodes);
@@ -26,14 +26,14 @@ int parse_newline(struct Token* tokens, int index, int length, struct narrayInfo
         node->type = DNL;
         node->value = "\n\n";
         addToNodeArray(nodes, node);
-        return index + 2;
+        return index + 1;
     }
     else {
         struct Node* node = malloc(sizeof(struct Node));
         node->type = TEXTNODE;
         node->value = "\n";
         addToNodeArray(nodes, node);
-        return index + 1;
+        return index ;
     }
 }
 
@@ -137,7 +137,7 @@ int parse_one_underscore(struct Token* tokens, int index, int length, struct nar
     int last =  0;
     char found = 0;
     struct Node* node = malloc(sizeof(struct Node));
-    for (int i = index+1; i <= length; i++) {
+    for (int i = index+1; i < length; i++) {
         if (tokens[i].type == UNDERSCORE && !tokens[i].parsed) {
             found = 1;
             last = i;
@@ -178,7 +178,7 @@ int parse_text(struct Token* tokens, int index, int length, struct narrayInfo* n
     node->value = tokens[index].value;
     node->children = NULL;
     addToNodeArray(nodes, node);
-    return length;
+    return index;
 }
 
 
