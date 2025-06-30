@@ -44,11 +44,11 @@ struct ptarrayInfo {
     struct preToken *data;
 };
 
-struct Token *tokenize(char *str);
+struct tarrayInfo *tokenize(char *str);
 
 struct Token *blockerize(char *str);
 
-struct Token *fragmentize(char *str);
+// struct Token *fragmentize(char *str);
 
 
 #ifdef __cplusplus

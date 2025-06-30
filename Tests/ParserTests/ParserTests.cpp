@@ -7,9 +7,10 @@
 
 TEST(ParserTest, BasicTest) {
     char text[] = "_Hello_";
-    Token *tokens = tokenize(text);
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
     narrayInfo* narray = createNodeArray(1);
-    parse(tokens, 0, 2, narray);
+    parse(tokens, 0, info->elements, narray);
     Node* nodes = narray->data;
     // ASSERT_EQ(nodes[0].type, BODY);
     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
@@ -20,9 +21,10 @@ TEST(ParserTest, BasicTest) {
 
 TEST(ParsetTest, NotEvenUnderscores) {
     char text[] = "_Hello__";
-    Token *tokens = tokenize(text);
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
     narrayInfo* narray = createNodeArray(1);
-    parse(tokens, 0, 3, narray);
+    parse(tokens, 0, info->elements, narray);
     Node* nodes = narray->data;
     // ASSERT_EQ(nodes[0].type, BODY);
     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
@@ -32,11 +34,12 @@ TEST(ParsetTest, NotEvenUnderscores) {
     ASSERT_TRUE(strcmp(nodes[1].value, "_") == 0);
 }
 
-TEST(ParsetTest, ThreeUnderscores) {
+TEST(ParsetTest, TwoUnderscores) {
     char text[] = "__";
-    Token *tokens = tokenize(text);
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
     narrayInfo* narray = createNodeArray(1);
-    parse(tokens, 0, 2, narray);
+    parse(tokens, 0, info->elements, narray);
     Node* nodes = narray->data;
     // ASSERT_EQ(nodes[0].type, BODY);
     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);

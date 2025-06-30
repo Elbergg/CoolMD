@@ -9,16 +9,16 @@
 struct Token *blockerize(char *text) {
     char *block = strtok(text, "\n\n");
     while (block != NULL) {
-        struct Token *tokens = fragmentize(block);
+        struct Token *tokens = tokenize(block);
     }
 }
 
-struct Token *fragmentize(char *block) {
-    char *fragment = strtok(block, "\n");
-    while (fragment != NULL) {
-        struct Token *tokens = tokenize(fragment);
-    }
-}
+// struct Token *fragmentize(char *block) {
+//     char *fragment = strtok(block, "\n");
+//     while (fragment != NULL) {
+//         struct Token *tokens = tokenize(fragment);
+//     }
+// }
 
 
 struct ptarrayInfo *createPreTokenArray(int capacity) {
@@ -140,17 +140,18 @@ struct Token *sort_tokens(struct ptarrayInfo **pretokens, int n) {
         i++;
     } while (i < n);
     mergeSort(res, 0, size - 1);
-    struct Token *res_tokens = malloc(sizeof(struct Token) * size);
+    struct tarrayInfo *res_tokens = createTokenArray(10);
     for (int i = 0; i < size; i++) {
-        res_tokens[i] = res[i].token;
-        res_tokens[i].parsed = 0;
+        res[i].token.parsed = 0;
+        addToTokenArray(res_tokens, &res[i].token);
+
     }
     free(res);
     return res_tokens;
 }
 
 
-struct Token *tokenize(char *text) {
+struct tarrayInfo *tokenize(char *text) {
     struct Token *tokens;
     int array_size = 0;
     int array_index = 0;

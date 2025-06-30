@@ -6,7 +6,8 @@
 
 TEST(TokenizerTests, BasicTest) {
     char text[] = "_Hello***";
-    Token *tokens = tokenize(text);
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
     ASSERT_EQ(tokens[0].type, UNDERSCORE);
     ASSERT_EQ(tokens[1].type, TEXT);
     ASSERT_EQ(tokens[2].type, STAR);
@@ -15,7 +16,8 @@ TEST(TokenizerTests, BasicTest) {
 
 TEST(TokenizerTests, BasicTest2) {
     char text[] = "_*aaa__bb";
-    Token *tokens = tokenize(text);
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
     ASSERT_EQ(tokens[0].type, UNDERSCORE);
     ASSERT_EQ(tokens[1].type, STAR);
     ASSERT_EQ(tokens[2].type, TEXT);
