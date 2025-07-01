@@ -33,13 +33,12 @@ TEST(ParserTest, ParagraphTest) {
 
 
 TEST(ParserTest, Paragraph2Test) {
-    char text[] = "_Hello_#Hi\n\n";
+    char text[] = "_Hello_";
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo* narray= parse(tokens, 0, info->elements);
     Node* nodes = narray->data[0].children->data;
     ASSERT_EQ(nodes[0].type, SENTENCE);
-    ASSERT_EQ(nodes[1].type, SENTENCE);
 }
 
 

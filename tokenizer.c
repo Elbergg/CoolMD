@@ -160,17 +160,18 @@ struct tarrayInfo *tokenize(char *text) {
     struct ptarrayInfo *star_matches = find_matches("[*]", text, STAR);
     struct ptarrayInfo *newlines = find_matches("[\n]", text, NEWLINE);
     struct ptarrayInfo* hashtags = find_matches("[#]", text, HASH);
-    struct ptarrayInfo **previous_matches = malloc(4);
+    struct ptarrayInfo **previous_matches = malloc(4*sizeof(struct ptarrayInfo*));
     previous_matches[0] = underscore_matches;
     previous_matches[1] = star_matches;
     previous_matches[2] = newlines;
     previous_matches[3] = hashtags;
-    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 3, text);
-    struct ptarrayInfo **all_matches = malloc(5);
+    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 4, text);
+    struct ptarrayInfo **all_matches = malloc(5*sizeof(struct ptarrayInfo*));
     all_matches[0] = underscore_matches;
     all_matches[1] = star_matches;
     all_matches[2] = text_matches;
     all_matches[3] = newlines;
+    all_matches[4] = hashtags;
     struct tarrayInfo *sorted_tokens = sort_tokens(all_matches, 5);
     return sorted_tokens;
 }

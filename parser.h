@@ -46,6 +46,7 @@ extern "C" {
     int parse_one_underscore(struct Token * tokens, int index, int length, struct narrayInfo * nodes);
     int parse_two_underscores(struct Token* tokens, int index, int length, struct narrayInfo * nodes);
     int parse_three_underscores(struct Token* tokens, int index, int length, struct narrayInfo * nodes);
+    int parse_hashtags(struct Token* tokens, int index, int length, struct narrayInfo * nodes) ;
     void addToNodeArray(struct narrayInfo *info, struct Node *node);
     void delete_last_n_nodes(struct narrayInfo *info, int n);
 

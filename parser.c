@@ -21,7 +21,7 @@ void parse_terminals(struct Token * tokens, int index, int length, struct narray
         }
     }
 }
-int parse_hashtags()
+int parse_hashtags(struct Token* tokens, int index, int length, struct narrayInfo * nodes) {}
 
 
 int parse_newline(struct Token* tokens, int index, int length, struct narrayInfo * nodes) {
