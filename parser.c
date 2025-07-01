@@ -43,9 +43,35 @@ void parse_non_terminals(struct narrayInfo* nodes) {
 }
 
 void parse_paragraphs(struct narrayInfo* nodes) {
-    for (int i = 0; i < nodes->elements; i++) {
-
+    struct narrayInfo* info = createNodeArray(10);
+    struct narrayInfo* candidates = nodes->data[0].children;
+    struct Node* parnode = malloc(sizeof(struct Node));
+    parnode->type = PARAGRAPH;
+    for (int i = 0; i < candidates->elements; i++) {
+        if (i < candidates->elements - 2 && candidates->data[i].type == SENTENCE ) {
+            parnode->children = createNodeArray(10);
+            addToNodeArray(info, &candidates->data[i]);
+            addToNodeArray(parnode->children, &candidates->data[i]);
+            i++;
+            while (candidates->data[i].type == SENTENCE && i < candidates->elements - 2) {
+                addToNodeArray(info, &candidates->data[i]);
+                addToNodeArray(parnode->children, &candidates->data[i]);
+                i++;
+            }
+            if (candidates->data[i].type == DNL) {
+                addToNodeArray(parnode->children, &candidates->data[i]);
+                delete_last_n_nodes(info, parnode->children->elements-1);
+                addToNodeArray(info, parnode);
+            }else {
+                addToNodeArray(info, &candidates->data[i]);
+                free(parnode->children);
+            }
+        }
+        else {
+            addToNodeArray(info, &candidates->data[i]);
+        }
     }
+    nodes->data[0].children = info;
 }
 
 struct narrayInfo* parse(struct Token * tokens, int index, int length) {
@@ -179,6 +205,10 @@ int parse_text(struct Token* tokens, int index, int length, struct narrayInfo* n
     node->children = NULL;
     addToNodeArray(nodes, node);
     return index;
+}
+
+void delete_last_n_nodes(struct narrayInfo *info, int n) {
+    info->elements -= n;
 }
 
 

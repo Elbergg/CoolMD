@@ -21,26 +21,29 @@ TEST(ParserTest, BasicTest) {
 
 
 
-// TEST(ParserTest, ParagraphTest) {
-//     char text[] = "_Hello_\n\n";
-//     struct tarrayInfo *info = tokenize(text);
-//     Token *tokens = info->data;
-//     narrayInfo* narray = createNodeArray(1);
-//     parse(tokens, 0, info->elements);
-//     Node* nodes = narray->data;
-//     // ASSERT_EQ(nodes[0].type, BODY);
-//     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
-//     ASSERT_EQ(nodes[0].type, EMPHASIS);
-//     ASSERT_EQ(nodes[0].children->data[0].type, TEXTNODE);
-//     ASSERT_TRUE(strcmp(nodes[0].children->data[0].value, "Hello") == 0);
-// }
-
-TEST(ParserTest, SentenceTest) {
+TEST(ParserTest, ParagraphTest) {
     char text[] = "_Hello_\n\nHi";
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo* narray= parse(tokens, 0, info->elements);
     Node* nodes = narray->data[0].children->data;
+    ASSERT_EQ(nodes[0].type, PARAGRAPH);
+    ASSERT_EQ(nodes[1].type, SENTENCE);
+}
+
+TEST(ParserTest, SentenceTest) {
+    char text[] = "_Hello_\n\nHi";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo* node = createNodeArray(1);
+    Node* head = (Node*)malloc(sizeof(struct Node));
+    head->type = BODY;
+    head->children = createNodeArray(10);
+    addToNodeArray(node, head);
+    parse_terminals(tokens, 0, info->elements, node->data[0].children);
+    parse_sentences(node);
+
+    Node* nodes = node->data[0].children->data;
     // ASSERT_EQ(nodes[0].type, BODY);
     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
     ASSERT_EQ(nodes[0].type, SENTENCE);
