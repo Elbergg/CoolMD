@@ -19,6 +19,7 @@ extern "C" {
         BOLD,
         SENTENCE,
         DNL,
+        HEADER,
     };
 
     struct Node {

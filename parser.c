@@ -15,10 +15,14 @@ void parse_terminals(struct Token * tokens, int index, int length, struct narray
             case NEWLINE:
                 i = parse_newline(tokens, i, length, nodes);
                 break;
+            case HASH:
+                i = parse_hashtags(tokens, i, length, nodes);
             default: ;
         }
     }
 }
+int parse_hashtags()
+
 
 int parse_newline(struct Token* tokens, int index, int length, struct narrayInfo * nodes) {
     if (index + 1 <= length && tokens[index + 1].type == NEWLINE) {

@@ -16,6 +16,7 @@ enum tokenType {
     NEWLINE,
     TEXT,
     EOF_S,
+    HASH,
 };
 
 struct Token {
