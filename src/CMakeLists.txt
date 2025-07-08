@@ -21,10 +21,13 @@ add_library(coolmd STATIC
         tokenizer.c
         merge.c
         merge.h
+        translator.h
+        translator.c
+        Tests/TranslatorTests/TranslatorTests.cpp
 )
 
 # Make headers available to other targets
-target_include_directories(coolmd PUBLIC .)
+target_include_directories(coolmd PUBLIC ..)
 
 # Add tests subdirectory
 add_subdirectory(Tests)

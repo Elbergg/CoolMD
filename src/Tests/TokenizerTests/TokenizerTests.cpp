@@ -2,7 +2,7 @@
 // Created by tomps on 19/06/2025.
 //
 #include "gtest/gtest.h"
-#include "tokenizer.h"
+#include "../../tokenizer.h"
 
 TEST(TokenizerTests, BasicTest) {
     char text[] = "_Hello***";
