@@ -56,7 +56,7 @@ int parse_newline(struct Token *tokens, int index, int length, struct narrayInfo
         return index + 1;
     } else {
         struct Node *node = malloc(sizeof(struct Node));
-        node->type = TEXTNODE;
+        node->type = SNL;
         node->value = "\n";
         addToNodeArray(nodes, node);
         return index;
@@ -68,7 +68,6 @@ void parse_h1(struct narrayInfo *nodes) {
     struct narrayInfo *candidates = nodes->data[0].children;
     struct Node *headnode = malloc(sizeof(struct Node));
     headnode->type = HEADER1;
-    char header = 0;
     for (int i = 0; i < candidates->elements; i++) {
         if (candidates->data[i].type == HASHNODE && i < candidates->elements - 1) {
             headnode->children = createNodeArray(10);
@@ -76,25 +75,15 @@ void parse_h1(struct narrayInfo *nodes) {
             i++;
             if (candidates->data[i].type == SENTENCE || candidates->data[i].type == PARAGRAPH) {
                 while ((candidates->data[i].type == SENTENCE || candidates->data[i].type == PARAGRAPH) && i < candidates
-                       ->elements) {
-                    header = 1;
+                       ->elements && candidates->data[i].type != SNL) {
                     addToNodeArray(headnode->children, &candidates->data[i]);
                     i++;
                 }
-            } else {
-                header = 0;
-                addToNodeArray(headnode->children, &candidates->data[i]);
-                free(headnode->children);
             }
-            if (header) {
-                delete_last_n_nodes(info, 1);
-                addToNodeArray(info, headnode);
-            } else {
-                candidates->data[i - 1].type = TEXTNODE;
-            }
+            delete_last_n_nodes(info, 1);
+            addToNodeArray(info, headnode);
         } else {
             addToNodeArray(info, &candidates->data[i]);
-            header = 0;
         }
     }
     nodes->data[0].children = info;
@@ -106,8 +95,8 @@ void parse_headers(struct narrayInfo *nodes) {
 
 void parse_non_terminals(struct narrayInfo *nodes) {
     parse_sentences(nodes);
-    parse_paragraphs(nodes);
     parse_headers(nodes);
+    parse_paragraphs(nodes);
 }
 
 void parse_paragraphs(struct narrayInfo *nodes) {
@@ -116,7 +105,7 @@ void parse_paragraphs(struct narrayInfo *nodes) {
     struct Node *parnode = malloc(sizeof(struct Node));
     parnode->type = PARAGRAPH;
     for (int i = 0; i < candidates->elements; i++) {
-        if (i < candidates->elements - 2 && candidates->data[i].type == SENTENCE) {
+        if (i < candidates->elements - 1 && candidates->data[i].type == SENTENCE) {
             parnode->children = createNodeArray(10);
             addToNodeArray(info, &candidates->data[i]);
             addToNodeArray(parnode->children, &candidates->data[i]);

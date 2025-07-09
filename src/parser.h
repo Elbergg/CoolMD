@@ -19,6 +19,7 @@ enum nodeType {
     BOLD,
     SENTENCE,
     DNL,
+    SNL,
     HASHNODE,
     HEADER1,
     HEADER2,

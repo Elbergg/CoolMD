@@ -89,6 +89,17 @@ TEST(ParserTest, HeaderSimpleTest) {
     ASSERT_EQ(nodes[0].children->data[0].type, SENTENCE);
 }
 
+TEST(ParserTest, HeaderParagraphTestSimpleTest) {
+    char text[] = "#Hello\ndzien dobry\n\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node *nodes = narray->data[0].children->data;
+    ASSERT_EQ(nodes[0].type, HEADER1);
+    ASSERT_EQ(nodes[1].type, PARAGRAPH);
+    ASSERT_EQ(nodes[0].children->data[0].type, SENTENCE);
+}
+
 TEST(ParsetTest, NotEvenUnderscores) {
     char text[] = "_Hello__";
     struct tarrayInfo *info = tokenize(text);
