@@ -23,7 +23,6 @@ add_library(coolmd STATIC
         merge.h
         translator.h
         translator.c
-        Tests/TranslatorTests/TranslatorTests.cpp
 )
 
 # Make headers available to other targets

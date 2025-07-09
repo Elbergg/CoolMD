@@ -1,6 +1,4 @@
 add_executable(translatortest TranslatorTests.cpp
-        ../../merge.c
-        ../../merge.h
         ../../translator.h
         ../../translator.c)
 

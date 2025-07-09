@@ -1,8 +1,8 @@
 //
 // Created by tomek on 7/8/25.
 //
+#include "parser.h"
 
-#ifndef TRANSLATOR_H
 #define TRANSLATOR_H
 
 
@@ -11,8 +11,7 @@ extern "C" {
 #endif
 
 
-
-
+char *to_html(struct Node *narray);
 
 #ifdef __cplusplus
 }
