@@ -44,7 +44,7 @@ void addToTokenArray(struct tarrayInfo *info, struct Token *token) {
     if (info->capacity - info->elements < 1) {
         info->capacity *= 2;
 
-        info->data =realloc(info->data, info->capacity * sizeof(struct Token));
+        info->data = realloc(info->data, info->capacity * sizeof(struct Token));
     }
     info->data[info->elements] = *token;
     info->elements++;
@@ -145,7 +145,6 @@ struct tarrayInfo *sort_tokens(struct ptarrayInfo **pretokens, int n) {
     for (int i = 0; i < size; i++) {
         res[i].token.parsed = 0;
         addToTokenArray(res_tokens, &res[i].token);
-
     }
     free(res);
     return res_tokens;
@@ -159,19 +158,22 @@ struct tarrayInfo *tokenize(char *text) {
     struct ptarrayInfo *underscore_matches = find_matches("[_]", text, UNDERSCORE);
     struct ptarrayInfo *star_matches = find_matches("[*]", text, STAR);
     struct ptarrayInfo *newlines = find_matches("[\n]", text, NEWLINE);
-    struct ptarrayInfo* hashtags = find_matches("[#]", text, HASH);
-    struct ptarrayInfo **previous_matches = malloc(4*sizeof(struct ptarrayInfo*));
+    struct ptarrayInfo *hashtags = find_matches("[#]", text, HASH);
+    struct ptarrayInfo *spaces = find_matches("[ ]", text, HASHSPACE);
+    struct ptarrayInfo **previous_matches = malloc(5 * sizeof(struct ptarrayInfo *));
     previous_matches[0] = underscore_matches;
     previous_matches[1] = star_matches;
     previous_matches[2] = newlines;
     previous_matches[3] = hashtags;
-    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 4, text);
-    struct ptarrayInfo **all_matches = malloc(5*sizeof(struct ptarrayInfo*));
+    previous_matches[4] = spaces;
+    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 5, text);
+    struct ptarrayInfo **all_matches = malloc(6 * sizeof(struct ptarrayInfo *));
     all_matches[0] = underscore_matches;
     all_matches[1] = star_matches;
     all_matches[2] = text_matches;
     all_matches[3] = newlines;
     all_matches[4] = hashtags;
-    struct tarrayInfo *sorted_tokens = sort_tokens(all_matches, 5);
+    all_matches[5] = spaces;
+    struct tarrayInfo *sorted_tokens = sort_tokens(all_matches, 6);
     return sorted_tokens;
 }

@@ -9,7 +9,7 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
             case UNDERSCORE:
                 i = parse_underscores(tokens, i, length, nodes);
                 break;
-            case TEXTNODE:
+            case TEXT:
                 i = parse_text(tokens, i, length, nodes);
                 break;
             case NEWLINE:
@@ -136,12 +136,17 @@ struct narrayInfo *parse(struct Token *tokens, int index, int length) {
     head->type = BODY;
     head->children = createNodeArray(10);
     addToNodeArray(node, head);
-
+    tokens = parse_spaces(tokens, length);
     parse_terminals(tokens, index, length, node->data[0].children);
     parse_non_terminals(node);
     return node;
 }
 
+struct Token *parse_spaces(struct Token *tokens, int length) {
+    struct tarrayInfo *info = createTokenArray(10);
+    for (int i = 0; i < length; i++) {
+    }
+}
 
 void parse_sentences(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);

@@ -17,12 +17,13 @@ enum tokenType {
     TEXT,
     EOF_S,
     HASH,
+    HASHSPACE,
 };
 
 struct Token {
     enum tokenType type;
     char *value;
-    char parsed ;
+    char parsed;
 };
 
 struct preToken {
@@ -51,6 +52,9 @@ struct tarrayInfo *tokenize(char *str);
 
 // struct Token *fragmentize(char *str);
 
+struct tarrayInfo *createTokenArray(int capacity);
+
+void addToTokenArray(struct tarrayInfo *info, struct Token *token);
 
 #ifdef __cplusplus
 }
