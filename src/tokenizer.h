@@ -17,6 +17,7 @@ enum tokenType {
     TEXT,
     EOF_S,
     HASH,
+    SPACE,
     HASHSPACE,
 };
 

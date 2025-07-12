@@ -159,7 +159,7 @@ struct tarrayInfo *tokenize(char *text) {
     struct ptarrayInfo *star_matches = find_matches("[*]", text, STAR);
     struct ptarrayInfo *newlines = find_matches("[\n]", text, NEWLINE);
     struct ptarrayInfo *hashtags = find_matches("[#]", text, HASH);
-    struct ptarrayInfo *spaces = find_matches("[ ]", text, HASHSPACE);
+    struct ptarrayInfo *spaces = find_matches("[ ]", text, SPACE);
     struct ptarrayInfo **previous_matches = malloc(5 * sizeof(struct ptarrayInfo *));
     previous_matches[0] = underscore_matches;
     previous_matches[1] = star_matches;

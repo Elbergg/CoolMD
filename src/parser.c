@@ -17,19 +17,20 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
                 break;
             case HASH:
                 i = parse_hashtags(tokens, i, length, nodes);
+            case HASHSPACE:
+                i = parse_one_hashtag(tokens, i , length, nodes);
             default: ;
         }
     }
 }
 
 int parse_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
-    if (index + 1 < length && tokens[index + 1].type == HASH && index + 2 < length && tokens[index + 2].type == HASH) {
+    if (index + 1 < length && tokens[index + 1].type == HASH && index + 2 < length && tokens[index + 2].type == HASHSPACE) {
         return parse_three_hashtags(tokens, index, length, nodes);
     }
-    if (index + 1 < length && tokens[index + 1].type == HASH) {
+    if (index + 1 < length && tokens[index + 1].type == HASHSPACE) {
         return parse_two_hashtags(tokens, index, length, nodes);
     }
-    return parse_one_hashtag(tokens, index, length, nodes);
 }
 
 
@@ -42,7 +43,7 @@ int parse_two_hashtags(struct Token *tokens, int index, int length, struct narra
 int parse_one_hashtag(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
     struct Node *node = malloc(sizeof(struct Node));
     node->type = HASHNODE;
-    node->value = "#";
+    node->value = "# ";
     addToNodeArray(nodes, node);
     return index;
 }
@@ -145,7 +146,25 @@ struct narrayInfo *parse(struct Token *tokens, int index, int length) {
 struct Token *parse_spaces(struct Token *tokens, int length) {
     struct tarrayInfo *info = createTokenArray(10);
     for (int i = 0; i < length; i++) {
+        if (tokens[i].type == HASH && i < length - 1 &&tokens[i+1].type == SPACE)
+        {
+            struct Token* token = malloc(sizeof(struct Token));
+            token->type = HASHSPACE;
+            token->value = "# ";
+            addToTokenArray(info, token);
+            i++;
+            continue;
+        }
+        if (tokens[i].type == SPACE)
+        {
+            tokens[i].type == TEXT;
+        }
+        addToTokenArray(info, &tokens[i]);
+
     }
+    struct Token* ret_tokens = info->data;
+    free(info);
+    return ret_tokens;
 }
 
 void parse_sentences(struct narrayInfo *nodes) {

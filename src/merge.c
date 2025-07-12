@@ -44,7 +44,7 @@ void merge(struct preToken arr[], int l, int m, int r) {
 }
 
 
-void mergeSort(int arr[], int l, int r) {
+void mergeSort(struct preToken arr[], int l, int r) {
     if (l < r) {
         int m = l + (r - l) / 2;
 

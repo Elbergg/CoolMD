@@ -80,7 +80,7 @@ TEST(ParserTest, SentenceDifferentTokenTypesTest) {
 }
 
 TEST(ParserTest, HeaderSimpleTest) {
-    char text[] = "#Hello";
+    char text[] = "# Hello";
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
@@ -90,7 +90,7 @@ TEST(ParserTest, HeaderSimpleTest) {
 }
 
 TEST(ParserTest, HeaderParagraphTestSimpleTest) {
-    char text[] = "#Hello\ndzien dobry\n\n";
+    char text[] = "# Hello\ndzien dobry\n\n";
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
