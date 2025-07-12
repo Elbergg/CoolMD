@@ -10,20 +10,22 @@
 
 
 char *html_val(struct Node *node, char *text) {
-    char *og = "";
+    char *og = malloc(strlen(text) + 100);
     switch (node->type) {
         case TEXTNODE:
             return node->value;
         case PARAGRAPH:
-            og = "<p>";
+            strcpy(og, "<p>");
             strcat(text, "</p>");
             strcat(og, text);
             return og;
         case HEADER1:
-            og = "<h1>";
+            strcpy(og,"<h1>");
             strcat(text, "</h1>");
             strcat(og, text);
             return og;
+        default:
+            return text;
     }
 }
 
@@ -31,10 +33,12 @@ char *to_html(struct Node *node) {
     if (node->children == NULL) {
         return html_val(node, "");
     }
-    char *result = "\0";
+    char *result = malloc(1000);
+    char* temp  = malloc(1000);
     for (int i = 0; i < node->children->elements; i++) {
-        result = to_html(node);
-        result = html_val(node, result);
+        temp = to_html(&node->children->data[i]);
+        temp = html_val(node, temp);
+        result = strcat(result, temp);
     }
     return result;
 }
