@@ -157,7 +157,7 @@ struct Token *parse_spaces(struct Token *tokens, int length) {
         }
         if (tokens[i].type == SPACE)
         {
-            tokens[i].type == TEXT;
+            tokens[i].type = TEXT;
         }
         addToTokenArray(info, &tokens[i]);
 

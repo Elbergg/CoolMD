@@ -30,6 +30,17 @@ TEST(ParserTest, ParagraphTest) {
     ASSERT_EQ(nodes[1].type, SENTENCE);
 }
 
+TEST(ParserTest, ParagraphSpaceTest) {
+    char text[] = "_He llo_\n\nHi";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node *nodes = narray->data[0].children->data;
+    ASSERT_EQ(nodes[0].type, PARAGRAPH);
+    ASSERT_EQ(nodes[1].type, SENTENCE);
+}
+
+
 
 TEST(ParserTest, Paragraph2Test) {
     char text[] = "_Hello_";
