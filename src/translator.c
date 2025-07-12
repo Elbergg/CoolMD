@@ -36,8 +36,8 @@ char *to_html(struct Node *node) {
     char *result = malloc(1000);
     char* temp  = malloc(1000);
     for (int i = 0; i < node->children->elements; i++) {
-        temp = to_html(&node->children->data[i]);
-        temp = html_val(node, temp);
+        strcpy(temp, to_html(&node->children->data[i]));
+        strcpy(temp, html_val(node, temp));
         result = strcat(result, temp);
     }
     return result;
