@@ -112,7 +112,8 @@ void parse_paragraphs(struct narrayInfo *nodes) {
             addToNodeArray(info, &candidates->data[i]);
             addToNodeArray(parnode->children, &candidates->data[i]);
             i++;
-            while (candidates->data[i].type == SENTENCE && i < candidates->elements - 2) {
+            while ((candidates->data[i].type == SENTENCE || candidates->data[i].type == SNL) && i < candidates->elements
+                   - 1) {
                 addToNodeArray(info, &candidates->data[i]);
                 addToNodeArray(parnode->children, &candidates->data[i]);
                 i++;

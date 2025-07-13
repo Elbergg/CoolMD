@@ -21,4 +21,12 @@ TEST(TranslatorTest, HeaderParagraphEmphasisTranslateTest) {
     ASSERT_TRUE(strcmp(to_html(&narray->data[0]), "<h1>Hello</h1><p><em>dzien dobry</em></p>") == 0);
 }
 
+TEST(TranslatorTest, NoHeaderParagraphEmphasisTranslateTest) {
+    char text[] = "Hello\n_dzien dobry_\n\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    ASSERT_TRUE(strcmp(to_html(&narray->data[0]), "<p>Hello<em>dzien dobry</em></p>") == 0);
+}
+
 
