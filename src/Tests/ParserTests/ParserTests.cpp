@@ -17,6 +17,8 @@ TEST(ParserTest, BasicTest) {
     ASSERT_EQ(nodes[0].type, EMPHASIS);
     ASSERT_EQ(nodes[0].children->data[0].type, TEXTNODE);
     ASSERT_TRUE(strcmp(nodes[0].children->data[0].value, "Hello") == 0);
+    free_tarray(info);
+    free_narray(narray);
 }
 
 
@@ -28,6 +30,8 @@ TEST(ParserTest, ParagraphTest) {
     Node *nodes = narray->data[0].children->data;
     ASSERT_EQ(nodes[0].type, PARAGRAPH);
     ASSERT_EQ(nodes[1].type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
 }
 
 TEST(ParserTest, ParagraphSpaceTest) {

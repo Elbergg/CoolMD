@@ -80,6 +80,10 @@ void parse_h1(struct narrayInfo *nodes);
 
 struct Token *parse_spaces(struct Token *tokens, int *length);
 
+void free_narray(struct narrayInfo *narray);
+
+void free_node(struct Node *node);
+
 
 #ifdef __cplusplus
 }

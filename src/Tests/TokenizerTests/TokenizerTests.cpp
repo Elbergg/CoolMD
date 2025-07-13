@@ -28,4 +28,5 @@ TEST(TokenizerTests, BasicTest2) {
     ASSERT_EQ(tokens[5].type, TEXT);
     ASSERT_TRUE(strcmp(tokens[2].value, "aaa") == 0);
     ASSERT_TRUE(strcmp(tokens[5].value, "bb") == 0);
+    free_tarray(info);
 }
