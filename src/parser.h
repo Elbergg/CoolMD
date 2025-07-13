@@ -78,7 +78,7 @@ void parse_headers(struct narrayInfo *nodes);
 
 void parse_h1(struct narrayInfo *nodes);
 
-struct Token *parse_spaces(struct Token *tokens, int length);
+struct Token *parse_spaces(struct Token *tokens, int *length);
 
 
 #ifdef __cplusplus

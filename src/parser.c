@@ -18,14 +18,15 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
             case HASH:
                 i = parse_hashtags(tokens, i, length, nodes);
             case HASHSPACE:
-                i = parse_one_hashtag(tokens, i , length, nodes);
+                i = parse_one_hashtag(tokens, i, length, nodes);
             default: ;
         }
     }
 }
 
 int parse_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
-    if (index + 1 < length && tokens[index + 1].type == HASH && index + 2 < length && tokens[index + 2].type == HASHSPACE) {
+    if (index + 1 < length && tokens[index + 1].type == HASH && index + 2 < length && tokens[index + 2].type ==
+        HASHSPACE) {
         return parse_three_hashtags(tokens, index, length, nodes);
     }
     if (index + 1 < length && tokens[index + 1].type == HASHSPACE) {
@@ -137,33 +138,34 @@ struct narrayInfo *parse(struct Token *tokens, int index, int length) {
     head->type = BODY;
     head->children = createNodeArray(10);
     addToNodeArray(node, head);
-    tokens = parse_spaces(tokens, length);
+    tokens = parse_spaces(tokens, &length);
     parse_terminals(tokens, index, length, node->data[0].children);
     parse_non_terminals(node);
     return node;
 }
 
-struct Token *parse_spaces(struct Token *tokens, int length) {
+struct Token *parse_spaces(struct Token *tokens, int *length) {
+    int reductions = 0;
     struct tarrayInfo *info = createTokenArray(10);
-    for (int i = 0; i < length; i++) {
-        if (tokens[i].type == HASH && i < length - 1 &&tokens[i+1].type == SPACE)
-        {
-            struct Token* token = malloc(sizeof(struct Token));
+    for (int i = 0; i < *length; i++) {
+        if (tokens[i].type == HASH && i < *length - 1 && tokens[i + 1].type == SPACE) {
+            struct Token *token = malloc(sizeof(struct Token));
             token->type = HASHSPACE;
             token->value = "# ";
             addToTokenArray(info, token);
             i++;
+            reductions++;
             continue;
         }
-        if (tokens[i].type == SPACE)
-        {
+        if (tokens[i].type == SPACE) {
             tokens[i].type = TEXT;
+            tokens[i].value = " ";
         }
         addToTokenArray(info, &tokens[i]);
-
     }
-    struct Token* ret_tokens = info->data;
+    struct Token *ret_tokens = info->data;
     free(info);
+    *length -= reductions;
     return ret_tokens;
 }
 
