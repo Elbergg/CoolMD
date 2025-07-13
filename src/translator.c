@@ -53,6 +53,7 @@ char *to_html(struct Node *node) {
     if (node->children == NULL) {
         return html_val(node, "");
     }
+    // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
     char *result = malloc(1000);
     char *temp = malloc(1000);
     for (int i = 0; i < node->children->elements; i++) {

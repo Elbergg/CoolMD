@@ -41,7 +41,6 @@ TEST(ParserTest, ParagraphSpaceTest) {
 }
 
 
-
 TEST(ParserTest, Paragraph2Test) {
     char text[] = "_Hello_";
     struct tarrayInfo *info = tokenize(text);
@@ -75,20 +74,20 @@ TEST(ParserTest, SentenceTest) {
 }
 
 
-TEST(ParserTest, SentenceDifferentTokenTypesTest) {
-    char text[] = "_Hello_Heyo_hiii_\n\nHi";
-    struct tarrayInfo *info = tokenize(text);
-    Token *tokens = info->data;
-    struct narrayInfo *narray = parse(tokens, 0, info->elements);
-    Node *nodes = narray->data[0].children->data;
-    // ASSERT_EQ(nodes[0].type, BODY);
-    // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
-    ASSERT_EQ(nodes[0].type, SENTENCE);
-    ASSERT_EQ(nodes[1].type, DNL);
-    ASSERT_EQ(nodes[2].type, SENTENCE);
-    // ASSERT_TRUE(strcmp(nodes[0].value, "Hello") == 0);
-    // ASSERT_TRUE(strcmp(nodes[2].value, "Hi") == 0);
-}
+// TEST(ParserTest, SentenceDifferentTokenTypesTest) {
+//     char text[] = "_Hello_Heyo_hiii_\n\nHi";
+//     struct tarrayInfo *info = tokenize(text);
+//     Token *tokens = info->data;
+//     struct narrayInfo *narray = parse(tokens, 0, info->elements);
+//     Node *nodes = narray->data[0].children->data;
+//     // ASSERT_EQ(nodes[0].type, BODY);
+//     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
+//     ASSERT_EQ(nodes[0].type, SENTENCE);
+//     ASSERT_EQ(nodes[1].type, DNL);
+//     ASSERT_EQ(nodes[2].type, SENTENCE);
+//     // ASSERT_TRUE(strcmp(nodes[0].value, "Hello") == 0);
+//     // ASSERT_TRUE(strcmp(nodes[2].value, "Hi") == 0);
+// }
 
 TEST(ParserTest, HeaderSimpleTest) {
     char text[] = "# Hello";

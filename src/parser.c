@@ -25,6 +25,7 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
 }
 
 int parse_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
+    // TODO: MAKE #Hello parse as two textnodes also implement parsing h2 and h3
     if (index + 1 < length && tokens[index + 1].type == HASH && index + 2 < length && tokens[index + 2].type ==
         HASHSPACE) {
         return parse_three_hashtags(tokens, index, length, nodes);
@@ -207,6 +208,7 @@ void parse_sentences(struct narrayInfo *nodes) {
 
 
 int parse_underscores(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
+    // TODO: IMPLEMENT PARSING TWO AND THREE UNDERSCORES
     if (index + 1 < length && tokens[index + 1].type == UNDERSCORE && index + 2 < length && tokens[index + 2].type ==
         UNDERSCORE) {
         return parse_three_underscores(tokens, index, length, nodes);
