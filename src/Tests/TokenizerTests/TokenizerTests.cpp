@@ -12,6 +12,8 @@ TEST(TokenizerTests, BasicTest) {
     ASSERT_EQ(tokens[1].type, TEXT);
     ASSERT_EQ(tokens[2].type, STAR);
     ASSERT_TRUE(strcmp(tokens[1].value, "Hello") == 0);
+    // free(tokens[1].value);
+    free_tarray(info);
 }
 
 TEST(TokenizerTests, BasicTest2) {

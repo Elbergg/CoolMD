@@ -57,6 +57,10 @@ struct tarrayInfo *createTokenArray(int capacity);
 
 void addToTokenArray(struct tarrayInfo *info, struct Token *token);
 
+void free_ptarray(struct ptarrayInfo *ptokens);
+
+void free_tarray(struct tarrayInfo *tokens);
+
 #ifdef __cplusplus
 }
 #endif

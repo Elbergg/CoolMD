@@ -77,6 +77,7 @@ struct ptarrayInfo *extract_text_tokens(struct ptarrayInfo **prev_matches, int t
     }
     int start = 0;
     char token = 0;
+    char *value = 0;
     struct ptarrayInfo *array = createPreTokenArray(10);
     for (int i = 0; i < strlen(text); i++) {
         if (!bitmask[i] && !token) {
@@ -85,7 +86,7 @@ struct ptarrayInfo *extract_text_tokens(struct ptarrayInfo **prev_matches, int t
         } else if (!bitmask[i] && token) {
         } else if (bitmask[i] && token) {
             token = 0;
-            char *value = malloc(i - start + 1);
+            value = malloc(i - start + 1);
             strncpy(value, &text[start], i - start);
             value[i - start] = '\0';
             struct preToken pt = {start, i, {TEXT, value}};
@@ -94,13 +95,12 @@ struct ptarrayInfo *extract_text_tokens(struct ptarrayInfo **prev_matches, int t
     }
     if (token) {
         token = 0;
-        char *value = malloc(strlen(text) - start + 1);
+        value = malloc(strlen(text) - start + 1);
         strncpy(value, &text[start], strlen(text) - start);
         value[strlen(text) - start] = '\0';
         struct preToken pt = {start, strlen(text), {TEXT, value}};
         addToPreTokenArray(array, &pt);
     }
-
     free(bitmask);
     return array;
 }
@@ -151,6 +151,22 @@ struct tarrayInfo *sort_tokens(struct ptarrayInfo **pretokens, int n) {
 }
 
 
+void free_ptarray(struct ptarrayInfo *ptokens) {
+    // for (int i = 0; i < ptokens->elements; i++) {
+    //     free(ptokens->data[i]);
+    // }
+    free(ptokens->data);
+    free(ptokens);
+}
+
+void free_tarray(struct tarrayInfo *tokens) {
+    for (int i = 0; i < tokens->elements; i++) {
+        free(tokens->data[i].value);
+    }
+    free(tokens->data);
+    free(tokens);
+}
+
 struct tarrayInfo *tokenize(char *text) {
     // TODO: FIX MEMORY LEAKS
     struct Token *tokens;
@@ -176,5 +192,15 @@ struct tarrayInfo *tokenize(char *text) {
     all_matches[4] = hashtags;
     all_matches[5] = spaces;
     struct tarrayInfo *sorted_tokens = sort_tokens(all_matches, 6);
+    free_ptarray(underscore_matches);
+    free_ptarray(star_matches);
+    free_ptarray(newlines);
+    free_ptarray(text_matches);
+    free_ptarray(spaces);
+    free_ptarray(hashtags);
+    free(previous_matches);
+    free(all_matches);
+
+
     return sorted_tokens;
 }
