@@ -42,6 +42,8 @@ TEST(ParserTest, ParagraphSpaceTest) {
     Node *nodes = narray->data[0].children->data;
     ASSERT_EQ(nodes[0].type, PARAGRAPH);
     ASSERT_EQ(nodes[1].type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
 }
 
 

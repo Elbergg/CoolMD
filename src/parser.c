@@ -93,6 +93,8 @@ void parse_h1(struct narrayInfo *nodes) {
         }
     }
     free(headnode);
+    free(nodes->data[0].children->data);
+    free(nodes->data[0].children);
     nodes->data[0].children = info;
 }
 
@@ -136,6 +138,8 @@ void parse_paragraphs(struct narrayInfo *nodes) {
         }
     }
     free(parnode);
+    free(nodes->data[0].children->data);
+    free(nodes->data[0].children);
     nodes->data[0].children = info;
 }
 
@@ -145,13 +149,17 @@ struct narrayInfo *parse(struct Token *tokens, int index, int length) {
     head->type = BODY;
     head->children = createNodeArray(10);
     addToNodeArray(node, head);
-    free(head);
+    // free(head->children);
+
+
     tokens = parse_spaces(tokens, &length);
     parse_terminals(tokens, index, length, node->data[0].children);
     parse_non_terminals(node);
-    for (int i = 0; i < length; i++) {
-        free(tokens[i].value);
-    }
+    free(head);
+    // free(head->children);
+    // for (int i = 0; i < length; i++) {
+    //     free(tokens[i].value);
+    // }
     free(tokens);
     return node;
 }
@@ -171,6 +179,7 @@ struct Token *parse_spaces(struct Token *tokens, int *length) {
         }
         if (tokens[i].type == SPACE) {
             tokens[i].type = TEXT;
+            free(tokens[i].value);
             tokens[i].value = strdup(" ");
         }
         addToTokenArray(info, &tokens[i]);
@@ -211,6 +220,7 @@ void parse_sentences(struct narrayInfo *nodes) {
         }
     }
     if (added) {
+        free(nodes->data[0].children->data);
         free(nodes->data[0].children);
         nodes->data[0].children = info;
     } else {
@@ -329,11 +339,16 @@ void free_node(struct Node *node) {
 }
 
 void free_narray(struct narrayInfo *narray) {
+    if (narray == NULL) return;
     for (int i = 0; i < narray->elements; i++) {
-        free_node(&narray->data[i]);
+        if (narray->data[i].children != NULL) {
+            free_narray(narray->data[i].children); // Recursive call
+        }
+        if (narray->data[i].value != NULL) {
+            free(narray->data[i].value);
+        }
     }
-
-    // free(narray->data);
+    free(narray->data);
     free(narray);
 }
 
