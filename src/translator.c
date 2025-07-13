@@ -20,8 +20,13 @@ char *html_val(struct Node *node, char *text) {
             strcat(og, text);
             return og;
         case HEADER1:
-            strcpy(og,"<h1>");
+            strcpy(og, "<h1>");
             strcat(text, "</h1>");
+            strcat(og, text);
+            return og;
+        case EMPHASIS:
+            strcpy(og, "<em>");
+            strcat(text, "</em>");
             strcat(og, text);
             return og;
         default:
@@ -29,16 +34,31 @@ char *html_val(struct Node *node, char *text) {
     }
 }
 
+
+// char *to_html(struct Node *node) {
+//     char stop = 0;
+//     while (!stop) {
+//
+//         char *result = malloc(1000);
+//         char *temp = malloc(1000);
+//         for (int i = 0; i < node->children->elements; i++) {
+//             strcpy(temp, to_html(&node->children->data[i])); //recurse into
+//             result = strcat(result, temp);
+//         }
+//     }
+// }
+
+
 char *to_html(struct Node *node) {
     if (node->children == NULL) {
         return html_val(node, "");
     }
     char *result = malloc(1000);
-    char* temp  = malloc(1000);
+    char *temp = malloc(1000);
     for (int i = 0; i < node->children->elements; i++) {
-        strcpy(temp, to_html(&node->children->data[i]));
-        strcpy(temp, html_val(node, temp));
+        strcpy(temp, to_html(&node->children->data[i])); //recurse into
         result = strcat(result, temp);
     }
+    strcpy(result, html_val(node, result));
     return result;
 }
