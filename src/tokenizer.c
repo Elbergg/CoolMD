@@ -117,7 +117,7 @@ struct ptarrayInfo *find_matches(char *pattern, char *text, enum tokenType type)
         pos = matches[i].rm_eo + pos;
         matches[i].rm_so = pos - 1;
         matches[i].rm_eo = pos;
-        struct preToken pt = {matches[i].rm_so, matches[i].rm_eo, {type, ""}};
+        struct preToken pt = {matches[i].rm_so, matches[i].rm_eo, {type, strdup("")}};
         addToPreTokenArray(ptokens, &pt);
         i++;
         start = &text[pos];
