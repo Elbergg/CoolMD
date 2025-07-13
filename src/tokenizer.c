@@ -123,6 +123,7 @@ struct ptarrayInfo *find_matches(char *pattern, char *text, enum tokenType type)
         start = &text[pos];
     }
     free(matches);
+    regfree(&regex);
     return ptokens;
 }
 
