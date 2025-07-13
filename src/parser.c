@@ -49,6 +49,7 @@ int parse_one_hashtag(struct Token *tokens, int index, int length, struct narray
     node->type = HASHSPACE;
     node->value = strdup("# ");
     addToNodeArray(nodes, node);
+    free_node(node);
     return index;
 }
 
@@ -65,6 +66,7 @@ int parse_newline(struct Token *tokens, int index, int length, struct narrayInfo
         node->type = SNL;
         node->value = strdup("\n");
         addToNodeArray(nodes, node);
+        free_node(node);
         return index;
     }
 }
@@ -175,6 +177,8 @@ struct Token *parse_spaces(struct Token *tokens, int *length) {
             addToTokenArray(info, token);
             i++;
             reductions++;
+            free(token->value);
+            free(token);
             continue;
         }
         if (tokens[i].type == SPACE) {

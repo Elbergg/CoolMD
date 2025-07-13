@@ -54,6 +54,8 @@ TEST(ParserTest, Paragraph2Test) {
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     Node *nodes = narray->data[0].children->data;
     ASSERT_EQ(nodes[0].type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
 }
 
 
@@ -62,7 +64,7 @@ TEST(ParserTest, SentenceTest) {
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo *node = createNodeArray(1);
-    Node *head = (Node *) malloc(sizeof(struct Node));
+    Node *head = (Node *) calloc(1, sizeof(struct Node));
     head->type = BODY;
     head->children = createNodeArray(10);
     addToNodeArray(node, head);
@@ -77,6 +79,9 @@ TEST(ParserTest, SentenceTest) {
     ASSERT_EQ(nodes[2].type, SENTENCE);
     // ASSERT_TRUE(strcmp(nodes[0].value, "Hello") == 0);
     // ASSERT_TRUE(strcmp(nodes[2].value, "Hi") == 0);
+    free(head);
+    free_tarray(info);
+    free_narray(node);
 }
 
 
@@ -114,6 +119,8 @@ TEST(ParserTest, HeaderParagraphTestSimpleTest) {
     ASSERT_EQ(nodes[0].type, HEADER1);
     ASSERT_EQ(nodes[1].type, PARAGRAPH);
     ASSERT_EQ(nodes[0].children->data[0].type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
 }
 
 TEST(ParsetTest, NotEvenUnderscores) {
@@ -129,9 +136,12 @@ TEST(ParsetTest, NotEvenUnderscores) {
     ASSERT_EQ(nodes[0].children->data[0].type, TEXTNODE);
     ASSERT_TRUE(strcmp(nodes[0].children->data[0].value, "Hello") == 0);
     ASSERT_TRUE(strcmp(nodes[1].value, "_") == 0);
+    free_tarray(info);
+    free_narray(narray);
 }
 
 TEST(ParsetTest, TwoUnderscores) {
+    // TODO: MAKE THIS TEST PASS
     char text[] = "__";
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
@@ -142,4 +152,6 @@ TEST(ParsetTest, TwoUnderscores) {
     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
     ASSERT_EQ(nodes[0].type, TEXTNODE);
     ASSERT_TRUE(strcmp(nodes[0].value, "__") == 0);
+    free_tarray(info);
+    free_narray(narray);
 }

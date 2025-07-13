@@ -11,6 +11,8 @@ TEST(TranslatorTest, HeaderParagraphTranslateTest) {
     Token *tokens = info->data;
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     ASSERT_TRUE(strcmp(to_html(&narray->data[0]), "<h1>Hello</h1><p>dzien dobry</p>") == 0);
+    free_tarray(info);
+    free_narray(narray);
 }
 
 TEST(TranslatorTest, HeaderParagraphEmphasisTranslateTest) {
