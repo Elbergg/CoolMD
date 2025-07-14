@@ -46,7 +46,7 @@ int parse_two_hashtags(struct Token *tokens, int index, int length, struct narra
 
 int parse_one_hashtag(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
     struct Node *node = calloc(1, sizeof(struct Node));
-    node->type = HASHSPACE;
+    node->type = HASHSPACENODE;
     node->value = strdup("# ");
     addToNodeArray(nodes, node);
     free_node(node);
@@ -59,7 +59,7 @@ int parse_newline(struct Token *tokens, int index, int length, struct narrayInfo
         node->type = DNL;
         node->value = strdup("\n\n");
         addToNodeArray(nodes, node);
-        free(node);
+        free_node(node);
         return index + 1;
     } else {
         struct Node *node = calloc(1, sizeof(struct Node));
@@ -77,7 +77,7 @@ void parse_h1(struct narrayInfo *nodes) {
     struct Node *headnode = calloc(1, sizeof(struct Node));
     headnode->type = HEADER1;
     for (int i = 0; i < candidates->elements; i++) {
-        if (candidates->data[i].type == HASHSPACE && i < candidates->elements - 1) {
+        if (candidates->data[i].type == HASHSPACENODE && i < candidates->elements - 1) {
             headnode->children = createNodeArray(10);
             addToNodeArray(info, &candidates->data[i]);
             i++;
@@ -265,6 +265,9 @@ void addToNodeArray(struct narrayInfo *info, struct Node *node) {
         info->data = realloc(info->data, info->capacity * sizeof(struct Node));
     }
     info->data[info->elements] = *node;
+    if (node->value != NULL) {
+        info->data[info->elements].value = strdup(node->value);
+    }
     info->elements++;
 }
 
@@ -322,7 +325,7 @@ int parse_text(struct Token *tokens, int index, int length, struct narrayInfo *n
     node->value = strdup(tokens[index].value);
     node->children = NULL;
     addToNodeArray(nodes, node);
-    free(node);
+    free_node(node);
     return index;
 }
 
@@ -346,7 +349,7 @@ void free_narray(struct narrayInfo *narray) {
     if (narray == NULL) return;
     for (int i = 0; i < narray->elements; i++) {
         if (narray->data[i].children != NULL) {
-            free_narray(narray->data[i].children); // Recursive call
+            free_narray(narray->data[i].children);
         }
         if (narray->data[i].value != NULL) {
             free(narray->data[i].value);

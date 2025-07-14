@@ -21,6 +21,7 @@ enum nodeType {
     DNL,
     SNL,
     HASHNODE,
+    HASHSPACENODE,
     HEADER1,
     HEADER2,
 };
