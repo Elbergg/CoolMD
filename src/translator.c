@@ -13,7 +13,10 @@ char *html_val(struct Node *node, char *text) {
     char *og = calloc(1, strlen(text) + 100);
     switch (node->type) {
         case TEXTNODE:
-            return node->value;
+            strcpy(og, node->value);
+            strcat(text, "");
+            strcat(og, text);
+            return og;
         case PARAGRAPH:
             strcpy(og, "<p>");
             strcat(text, "</p>");

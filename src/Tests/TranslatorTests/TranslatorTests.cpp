@@ -12,9 +12,10 @@ TEST(TranslatorTest, HeaderParagraphTranslateTest) {
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     char *result = to_html(&narray->data[0]);
     ASSERT_TRUE(strcmp(result, "<h1>Hello</h1><p>dzien dobry</p>") == 0);
-    free(result);
+
     free_tarray(info);
     free_narray(narray);
+    free(result);
 }
 
 TEST(TranslatorTest, HeaderParagraphEmphasisTranslateTest) {
