@@ -10,7 +10,7 @@ TEST(TranslatorTest, HeaderParagraphTranslateTest) {
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
-    char *result = to_html(&narray->data[0]);
+    char *result = to_html(narray->data[0]);
     ASSERT_TRUE(strcmp(result, "<h1>Hello</h1><p>dzien dobry</p>") == 0);
 
     free_tarray(info);
@@ -23,7 +23,7 @@ TEST(TranslatorTest, HeaderParagraphEmphasisTranslateTest) {
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
-    char *result = to_html(&narray->data[0]);
+    char *result = to_html(narray->data[0]);
     ASSERT_TRUE(strcmp(result, "<h1>Hello</h1><p><em>dzien dobry</em></p>") == 0);
     free_tarray(info);
     free_narray(narray);
@@ -35,7 +35,7 @@ TEST(TranslatorTest, NoHeaderParagraphEmphasisTranslateTest) {
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
-    char *result = to_html(&narray->data[0]);
+    char *result = to_html(narray->data[0]);
     ASSERT_TRUE(strcmp(result, "<p>Hello<em>dzien dobry</em></p>") == 0);
     free_tarray(info);
     free_narray(narray);
