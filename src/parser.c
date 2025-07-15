@@ -49,7 +49,7 @@ int parse_one_hashtag(struct Token *tokens, int index, int length, struct narray
     node->type = HASHSPACENODE;
     node->value = strdup("# ");
     addToNodeArray(nodes, node);
-    free_node(node);
+    // free_node(node);
     return index;
 }
 
@@ -59,45 +59,59 @@ int parse_newline(struct Token *tokens, int index, int length, struct narrayInfo
         node->type = DNL;
         node->value = strdup("\n\n");
         addToNodeArray(nodes, node);
-        free_node(node);
+        // free_node(node);
         return index + 1;
     } else {
         struct Node *node = calloc(1, sizeof(struct Node));
         node->type = SNL;
         node->value = strdup("\n");
         addToNodeArray(nodes, node);
-        free_node(node);
+        // free_node(node);
         return index;
     }
 }
 
 void parse_h1(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
-    struct narrayInfo *candidates = nodes->data[0].children;
+    struct narrayInfo *candidates = nodes->data[0]->children;
     struct Node *headnode = calloc(1, sizeof(struct Node));
     headnode->type = HEADER1;
+    char added = 0;
     for (int i = 0; i < candidates->elements; i++) {
-        if (candidates->data[i].type == HASHSPACENODE && i < candidates->elements - 1) {
+        if (candidates->data[i]->type == HASHSPACENODE && i < candidates->elements - 1) {
+            added = 1;
             headnode->children = createNodeArray(10);
-            addToNodeArray(info, &candidates->data[i]);
+            addToNodeArray(info, candidates->data[i]);
+            addToNodeArray(headnode->children, candidates->data[i]);
             i++;
-            if (candidates->data[i].type == SENTENCE || candidates->data[i].type == PARAGRAPH) {
-                while ((candidates->data[i].type == SENTENCE || candidates->data[i].type == PARAGRAPH) && i < candidates
-                       ->elements && candidates->data[i].type != SNL) {
-                    addToNodeArray(headnode->children, &candidates->data[i]);
+            if (candidates->data[i]->type == SENTENCE || candidates->data[i]->type == PARAGRAPH) {
+                while (((i <
+                         candidates
+                         ->elements) && (candidates->data[i]->type == SENTENCE || candidates->data[i]->type ==
+                                         PARAGRAPH)
+                        && candidates->data[i]->type != SNL)) {
+                    addToNodeArray(headnode->children, candidates->data[i]);
                     i++;
                 }
+            }
+            if (i <
+                candidates
+                ->elements && candidates->data[i]->type == SNL) {
+                addToNodeArray(headnode->children, candidates->data[i]);
             }
             delete_last_n_nodes(info, 1);
             addToNodeArray(info, headnode);
         } else {
-            addToNodeArray(info, &candidates->data[i]);
+            addToNodeArray(info, candidates->data[i]);
         }
     }
-    free(headnode);
-    free(nodes->data[0].children->data);
-    free(nodes->data[0].children);
-    nodes->data[0].children = info;
+    if (!added) {
+        free(headnode);
+    }
+    // free(headnode);
+    free(nodes->data[0]->children->data);
+    free(nodes->data[0]->children);
+    nodes->data[0]->children = info;
 }
 
 void parse_headers(struct narrayInfo *nodes) {
@@ -112,37 +126,43 @@ void parse_non_terminals(struct narrayInfo *nodes) {
 
 void parse_paragraphs(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
-    struct narrayInfo *candidates = nodes->data[0].children;
+    struct narrayInfo *candidates = nodes->data[0]->children;
     struct Node *parnode = calloc(1, sizeof(struct Node));
     parnode->type = PARAGRAPH;
+    char added = 0;
     for (int i = 0; i < candidates->elements; i++) {
-        if (i < candidates->elements - 1 && candidates->data[i].type == SENTENCE) {
+        if (i < candidates->elements - 1 && candidates->data[i]->type == SENTENCE) {
             parnode->children = createNodeArray(10);
-            addToNodeArray(info, &candidates->data[i]);
-            addToNodeArray(parnode->children, &candidates->data[i]);
+            addToNodeArray(info, candidates->data[i]);
+            addToNodeArray(parnode->children, candidates->data[i]);
             i++;
-            while ((candidates->data[i].type == SENTENCE || candidates->data[i].type == SNL) && i < candidates->elements
+            while ((candidates->data[i]->type == SENTENCE || candidates->data[i]->type == SNL) && i < candidates->
+                   elements
                    - 1) {
-                addToNodeArray(info, &candidates->data[i]);
-                addToNodeArray(parnode->children, &candidates->data[i]);
+                addToNodeArray(info, candidates->data[i]);
+                addToNodeArray(parnode->children, candidates->data[i]);
                 i++;
             }
-            if (candidates->data[i].type == DNL) {
-                addToNodeArray(parnode->children, &candidates->data[i]);
+            if (candidates->data[i]->type == DNL) {
+                added = 1;
+                addToNodeArray(parnode->children, candidates->data[i]);
                 delete_last_n_nodes(info, parnode->children->elements - 1);
                 addToNodeArray(info, parnode);
             } else {
-                addToNodeArray(info, &candidates->data[i]);
+                addToNodeArray(info, candidates->data[i]);
                 free(parnode->children);
             }
         } else {
-            addToNodeArray(info, &candidates->data[i]);
+            addToNodeArray(info, candidates->data[i]);
         }
     }
-    free(parnode);
-    free(nodes->data[0].children->data);
-    free(nodes->data[0].children);
-    nodes->data[0].children = info;
+    if (!added) {
+        free(parnode);
+    }
+    // free(parnode);
+    free(nodes->data[0]->children->data);
+    free(nodes->data[0]->children);
+    nodes->data[0]->children = info;
 }
 
 struct narrayInfo *parse(struct Token *tokens, int index, int length) {
@@ -155,9 +175,9 @@ struct narrayInfo *parse(struct Token *tokens, int index, int length) {
 
 
     tokens = parse_spaces(tokens, &length);
-    parse_terminals(tokens, index, length, node->data[0].children);
+    parse_terminals(tokens, index, length, node->data[0]->children);
     parse_non_terminals(node);
-    free(head);
+    // free(head);
     // free(head->children);
     // for (int i = 0; i < length; i++) {
     //     free(tokens[i].value);
@@ -198,49 +218,53 @@ struct Token *parse_spaces(struct Token *tokens, int *length) {
 void parse_sentences(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
     char sentence = 0;
-    struct narrayInfo *candidates = nodes->data[0].children;
+    struct narrayInfo *candidates = nodes->data[0]->children;
     char added = 0;
     struct Node *sentnode = NULL;
     struct narrayInfo *children = NULL;
     for (int i = 0; i < candidates->elements; i++) {
-        if ((candidates->data[i].type == EMPHASIS || candidates->data[i].type == TEXTNODE || candidates->data[i].type ==
+        if ((candidates->data[i]->type == EMPHASIS || candidates->data[i]->type == TEXTNODE || candidates->data[i]->type
+             ==
              BOLD) && sentence == 0) {
             sentence = 1;
             added = 1;
             sentnode = calloc(1, sizeof(struct Node));
             sentnode->type = SENTENCE;
             sentnode->children = createNodeArray(10);
-            addToNodeArray(sentnode->children, &candidates->data[i]);
+            addToNodeArray(sentnode->children, candidates->data[i]);
             addToNodeArray(info, sentnode);
             children = sentnode->children;
-            free(sentnode);
-            sentnode = NULL;
-        } else if ((candidates->data[i].type == EMPHASIS || candidates->data[i].type == TEXTNODE || candidates->data[i].
+            // free(sentnode);
+            // sentnode = NULL;
+        } else if ((candidates->data[i]->type == EMPHASIS || candidates->data[i]->type == TEXTNODE || candidates->data[
+                        i]->
                     type == BOLD) && sentence == 1) {
-            addToNodeArray(children, &candidates->data[i]);
+            addToNodeArray(children, candidates->data[i]);
         } else {
             sentence = 0;
-            addToNodeArray(info, &candidates->data[i]);
+            addToNodeArray(info, candidates->data[i]);
         }
+        // }
+        // if (added) {
     }
-    if (added) {
-        free(nodes->data[0].children->data);
-        free(nodes->data[0].children);
-        nodes->data[0].children = info;
-    } else {
-        free(info);
-    }
+    free(nodes->data[0]->children->data);
+    free(nodes->data[0]->children);
+    nodes->data[0]->children = info;
+    // } else {
+    //     free(info);
+    // }
     // if (sentnode->value != NULL) {
     //     free(sentnode->value);
     // }
     // free(sentnode->value);
-    free(sentnode);
+    // free(sentnode);
 }
 
 
 int parse_underscores(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
     // TODO: IMPLEMENT PARSING TWO AND THREE UNDERSCORES
-    if (index + 1 < length && tokens[index + 1].type == UNDERSCORE && index + 2 < length && tokens[index + 2].type ==
+    if (index + 1 < length && tokens[index + 1].type == UNDERSCORE && index + 2 < length && tokens[index + 2].type
+        ==
         UNDERSCORE) {
         return parse_three_underscores(tokens, index, length, nodes);
     }
@@ -251,7 +275,7 @@ int parse_underscores(struct Token *tokens, int index, int length, struct narray
 }
 
 struct narrayInfo *createNodeArray(int capacity) {
-    struct Node *nodes = calloc(capacity, sizeof(struct Node));
+    struct Node **nodes = calloc(capacity, sizeof(struct Node *));
     struct narrayInfo *info = malloc(sizeof(struct narrayInfo));
     info->capacity = capacity;
     info->elements = 0;
@@ -262,12 +286,13 @@ struct narrayInfo *createNodeArray(int capacity) {
 void addToNodeArray(struct narrayInfo *info, struct Node *node) {
     if (info->capacity - info->elements < 1) {
         info->capacity *= 2;
-        info->data = realloc(info->data, info->capacity * sizeof(struct Node));
+        info->data = realloc(info->data, info->capacity * sizeof(struct Node *)
+        );
     }
-    info->data[info->elements] = *node;
-    if (node->value != NULL) {
-        info->data[info->elements].value = strdup(node->value);
-    }
+    info->data[info->elements] = node;
+    // if (node->value != NULL) {
+    //     info->data[info->elements]->value = strdup(node->value);
+    // }
     info->elements++;
 }
 
@@ -294,7 +319,7 @@ int parse_one_underscore(struct Token *tokens, int index, int length, struct nar
         node->value = strdup("_");
         tokens[index].parsed = 1;
         addToNodeArray(nodes, node);
-        free(node);
+        // free(node);
         return length;
     }
     if (index + 1 != last) {
@@ -305,7 +330,7 @@ int parse_one_underscore(struct Token *tokens, int index, int length, struct nar
         node->children = createNodeArray(10);
         addToNodeArray(nodes, node);
         parse_terminals(tokens, index + 1, last, node->children);
-        free(node);
+        // free(node);
         return last;
     } else {
         node->type = TEXTNODE;
@@ -325,7 +350,7 @@ int parse_text(struct Token *tokens, int index, int length, struct narrayInfo *n
     node->value = strdup(tokens[index].value);
     node->children = NULL;
     addToNodeArray(nodes, node);
-    free_node(node);
+    // free_node(node);
     return index;
 }
 
@@ -348,12 +373,7 @@ void free_node(struct Node *node) {
 void free_narray(struct narrayInfo *narray) {
     if (narray == NULL) return;
     for (int i = 0; i < narray->elements; i++) {
-        if (narray->data[i].children != NULL) {
-            free_narray(narray->data[i].children);
-        }
-        if (narray->data[i].value != NULL) {
-            free(narray->data[i].value);
-        }
+        free_node(narray->data[i]);
     }
     free(narray->data);
     free(narray);

@@ -36,7 +36,7 @@ struct Node {
 struct narrayInfo {
     int capacity;
     int elements;
-    struct Node *data;
+    struct Node **data;
 };
 
 struct narrayInfo *parse(struct Token *tokens, int index, int length);
