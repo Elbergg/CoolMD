@@ -63,7 +63,7 @@ char *to_html(struct Node *node) {
     char *result = calloc(1, 1000);
     // char *temp = malloc(1000);
     for (int i = 0; i < node->children->elements; i++) {
-        char *val = to_html(&node->children->data[i]);
+        char *val = to_html(node->children->data[i]);
         result = strcat(result, val);
         free(val);
     }
