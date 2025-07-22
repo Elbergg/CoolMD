@@ -24,6 +24,10 @@ enum nodeType {
     HASHSPACENODE,
     HEADER1,
     HEADER2,
+    HEADER3,
+    HEADER4,
+    HEADER5,
+    HEADER6
 };
 
 struct Node {
@@ -84,6 +88,18 @@ struct Token *parse_spaces(struct Token *tokens, int *length);
 void free_narray(struct narrayInfo *narray);
 
 void free_node(struct Node *node);
+
+void parse_h2(struct narrayInfo *narray);
+
+void parse_h3(struct narrayInfo *narray);
+
+void parse_h4(struct narrayInfo *narray);
+
+void parse_h5(struct narrayInfo *narray);
+
+void parse_h6(struct narrayInfo *narray);
+
+void parse_hs(struct narrayInfo *narray);
 
 
 #ifdef __cplusplus

@@ -27,14 +27,11 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
 }
 
 int parse_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
-    // TODO: MAKE #Hello parse as two textnodes also implement parsing h2 and h3
-    if (index + 1 < length && tokens[index + 1].type == HASH && index + 2 < length && tokens[index + 2].type ==
-        HASHSPACE) {
-        return parse_three_hashtags(tokens, index, length, nodes);
-    }
-    if (index + 1 < length && tokens[index + 1].type == HASHSPACE) {
-        return parse_two_hashtags(tokens, index, length, nodes);
-    }
+    struct Node *node = calloc(1, sizeof(struct Node));
+    node->type = HASHNODE;
+    node->value = strdup("#");
+    addToNodeArray(nodes, node);
+    return index;
 }
 
 
@@ -49,7 +46,6 @@ int parse_one_hashtag(struct Token *tokens, int index, int length, struct narray
     node->type = HASHSPACENODE;
     node->value = strdup("# ");
     addToNodeArray(nodes, node);
-    // free_node(node);
     return index;
 }
 
@@ -116,7 +112,60 @@ void parse_h1(struct narrayInfo *nodes) {
 
 void parse_headers(struct narrayInfo *nodes) {
     parse_h1(nodes);
-};
+    parse_hs(nodes);
+}
+
+void parse_hs(struct narrayInfo *nodes) {
+    struct narrayInfo *info = createNodeArray(10);
+    struct narrayInfo *candidates = nodes->data[0]->children;
+    struct Node *headnode = calloc(1, sizeof(struct Node));
+    char added = 0;
+    int count = 0;
+    for (int i = 0; i < candidates->elements; i++) {
+        if (candidates->data[i]->type == HASHNODE) {
+            count++;
+            headnode->children = createNodeArray(10);
+            addToNodeArray(info, candidates->data[i]);
+            addToNodeArray(headnode->children, candidates->data[i]);
+        } else if (candidates->data[i]->type == HEADER1) {
+            added = 1;
+            for (int j = 0; j < candidates->data[i]->children->elements; j++) {
+                addToNodeArray(headnode->children, candidates->data[i]->children->data[j]);
+            }
+            free(candidates->data[i]);
+            break;
+        }
+    }
+    if (!added) {
+        free(headnode);
+    } else {
+        switch (count) {
+            case 0:
+                free(headnode);
+                break;
+            case 1:
+                headnode->type = HEADER2;
+                break;
+            case 2:
+                headnode->type = HEADER3;
+                break;
+            case 3:
+                headnode->type = HEADER4;
+                break;
+            case 4:
+                headnode->type = HEADER5;
+                break;
+            case 5:
+                headnode->type = HEADER6;
+                break;
+        }
+        delete_last_n_nodes(info, count);
+        addToNodeArray(info, headnode);
+    }
+    free(nodes->data[0]->children->data);
+    free(nodes->data[0]->children);
+    nodes->data[0]->children = info;
+}
 
 void parse_non_terminals(struct narrayInfo *nodes) {
     parse_sentences(nodes);
