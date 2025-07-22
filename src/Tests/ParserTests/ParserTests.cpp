@@ -119,8 +119,73 @@ TEST(ParserTest, Header2SimpleTest) {
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     Node **nodes = narray->data[0]->children->data;
     ASSERT_EQ(nodes[0]->type, HEADER2);
-    ASSERT_EQ(nodes[0]->children->data[0]->type, HASHSPACENODE);
-    ASSERT_EQ(nodes[0]->children->data[1]->type, SENTENCE);
+    ASSERT_EQ(nodes[0]->children->data[0]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, HASHSPACENODE);
+    ASSERT_EQ(nodes[0]->children->data[2]->type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
+}
+
+TEST(ParserTest, Header3SimpleTest) {
+    char text[] = "### Hello";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->type, HEADER3);
+    ASSERT_EQ(nodes[0]->children->data[0]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[2]->type, HASHSPACENODE);
+    ASSERT_EQ(nodes[0]->children->data[3]->type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
+}
+
+TEST(ParserTest, Header4SimpleTest) {
+    char text[] = "#### Hello";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->type, HEADER4);
+    ASSERT_EQ(nodes[0]->children->data[0]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[2]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[3]->type, HASHSPACENODE);
+    ASSERT_EQ(nodes[0]->children->data[4]->type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
+}
+TEST(ParserTest, Header5SimpleTest) {
+    char text[] = "##### Hello";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->children->data[0]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[2]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[3]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[4]->type, HASHSPACENODE);
+    ASSERT_EQ(nodes[0]->children->data[5]->type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
+}
+
+TEST(ParserTest, Header6SimpleTest) {
+    char text[] = "###### Hello";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->type, HEADER6);
+    ASSERT_EQ(nodes[0]->children->data[0]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[2]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[3]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[4]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[5]->type, HASHSPACENODE);
+    ASSERT_EQ(nodes[0]->children->data[6]->type, SENTENCE);
     free_tarray(info);
     free_narray(narray);
 }
@@ -135,6 +200,22 @@ TEST(ParserTest, HeaderParagraphTestSimpleTest) {
     ASSERT_EQ(nodes[1]->type, PARAGRAPH);
     ASSERT_EQ(nodes[0]->children->data[0]->type, HASHSPACENODE);
     ASSERT_EQ(nodes[0]->children->data[1]->type, SENTENCE);
+    free_tarray(info);
+    free_narray(narray);
+}
+
+TEST(ParserTest, Header3ParagraphTestSimpleTest) {
+    char text[] = "### Hello\ndzien dobry\n\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->type, HEADER3);
+    ASSERT_EQ(nodes[1]->type, PARAGRAPH);
+    ASSERT_EQ(nodes[0]->children->data[0]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, HASHNODE);
+    ASSERT_EQ(nodes[0]->children->data[2]->type, HASHSPACENODE);
+    ASSERT_EQ(nodes[0]->children->data[3]->type, SENTENCE);
     free_tarray(info);
     free_narray(narray);
 }

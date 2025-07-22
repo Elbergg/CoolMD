@@ -19,8 +19,10 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
                 break;
             case HASH:
                 i = parse_hashtags(tokens, i, length, nodes);
+                break;
             case HASHSPACE:
                 i = parse_one_hashtag(tokens, i, length, nodes);
+                break;
             default: ;
         }
     }
@@ -122,45 +124,58 @@ void parse_hs(struct narrayInfo *nodes) {
     char added = 0;
     int count = 0;
     for (int i = 0; i < candidates->elements; i++) {
-        if (candidates->data[i]->type == HASHNODE) {
+        if (candidates->data[i]->type == HASHNODE && count == 0) {
             count++;
             headnode->children = createNodeArray(10);
             addToNodeArray(info, candidates->data[i]);
             addToNodeArray(headnode->children, candidates->data[i]);
-        } else if (candidates->data[i]->type == HEADER1) {
+        }
+        else if (candidates->data[i]->type == HASHNODE && count != 0)
+        {
+            count++;
+            addToNodeArray(info, candidates->data[i]);
+            addToNodeArray(headnode->children, candidates->data[i]);
+        }
+        else if (candidates->data[i]->type == HEADER1 && count != 0) {
             added = 1;
             for (int j = 0; j < candidates->data[i]->children->elements; j++) {
                 addToNodeArray(headnode->children, candidates->data[i]->children->data[j]);
             }
             free(candidates->data[i]);
-            break;
+            switch (count)
+            {
+                case 0:
+                    free(headnode);
+                break;
+                case 1:
+                    headnode->type = HEADER2;
+                break;
+                case 2:
+                    headnode->type = HEADER3;
+                break;
+                case 3:
+                    headnode->type = HEADER4;
+                break;
+                case 4:
+                    headnode->type = HEADER5;
+                break;
+                case 5:
+                    headnode->type = HEADER6;
+                break;
+            }
+            delete_last_n_nodes(info, count);
+            addToNodeArray(info, headnode);
+            count = 0;
+
+        }
+        else
+        {
+            addToNodeArray(info, candidates->data[i]);
         }
     }
-    if (!added) {
+    if (!added)
+    {
         free(headnode);
-    } else {
-        switch (count) {
-            case 0:
-                free(headnode);
-                break;
-            case 1:
-                headnode->type = HEADER2;
-                break;
-            case 2:
-                headnode->type = HEADER3;
-                break;
-            case 3:
-                headnode->type = HEADER4;
-                break;
-            case 4:
-                headnode->type = HEADER5;
-                break;
-            case 5:
-                headnode->type = HEADER6;
-                break;
-        }
-        delete_last_n_nodes(info, count);
-        addToNodeArray(info, headnode);
     }
     free(nodes->data[0]->children->data);
     free(nodes->data[0]->children);
