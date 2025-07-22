@@ -5,7 +5,23 @@
 #include "gtest/gtest.h"
 #include "../../parser.h"
 
-TEST(ParserTest, BasicTest) {
+TEST(ParserTest, EmphasisUnderscoreTest) {
+    char text[] = "_Hello_";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    narrayInfo *narray = createNodeArray(1);
+    parse_terminals(tokens, 0, info->elements, narray);
+    Node **nodes = narray->data;
+    // ASSERT_EQ(nodes[0].type, BODY);
+    // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
+    ASSERT_EQ(nodes[0]->type, EMPHASIS);
+    ASSERT_EQ(nodes[0]->children->data[0]->type, TEXTNODE);
+    ASSERT_TRUE(strcmp(nodes[0]->children->data[0]->value, "Hello") == 0);
+    free_tarray(info);
+    free_narray(narray);
+}
+
+TEST(ParserTest, EmphasisStarTest) {
     char text[] = "_Hello_";
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
@@ -156,6 +172,7 @@ TEST(ParserTest, Header4SimpleTest) {
     free_tarray(info);
     free_narray(narray);
 }
+
 TEST(ParserTest, Header5SimpleTest) {
     char text[] = "##### Hello";
     struct tarrayInfo *info = tokenize(text);
@@ -238,7 +255,6 @@ TEST(ParsetTest, NotEvenUnderscores) {
 }
 
 TEST(ParsetTest, TwoUnderscores) {
-    // TODO: MAKE THIS TEST PASS
     char text[] = "__";
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
@@ -248,7 +264,9 @@ TEST(ParsetTest, TwoUnderscores) {
     // ASSERT_EQ(nodes[0].type, BODY);
     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
     ASSERT_EQ(nodes[0]->type, TEXTNODE);
-    ASSERT_TRUE(strcmp(nodes[0]->value, "__") == 0);
+    ASSERT_EQ(nodes[1]->type, TEXTNODE);
+    ASSERT_TRUE(strcmp(nodes[0]->value, "_") == 0);
+    ASSERT_TRUE(strcmp(nodes[1]->value, "_") == 0);
     free_tarray(info);
     free_narray(narray);
 }

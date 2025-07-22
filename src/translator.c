@@ -81,6 +81,7 @@ char *html_val(struct Node *node, char *text) {
 
 
 char *to_html(struct Node *node) {
+    // TODO: USE ITERATION INSTEAD OF RECURSION
     if (node->children == NULL) {
         return html_val(node, "");
     }
