@@ -30,6 +30,18 @@ TEST(TranslatorTest, HeaderParagraphEmphasisTranslateTest) {
     free(result);
 }
 
+TEST(TranslatorTest, Header3ParagraphEmphasisTranslateTest) {
+    char text[] = "### Hello\n_dzien dobry_\n\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    char *result = to_html(narray->data[0]);
+    ASSERT_TRUE(strcmp(result, "<h3>Hello</h3><p><em>dzien dobry</em></p>") == 0);
+    free_tarray(info);
+    free_narray(narray);
+    free(result);
+}
+
 TEST(TranslatorTest, NoHeaderParagraphEmphasisTranslateTest) {
     char text[] = "Hello\n_dzien dobry_\n\n";
     struct tarrayInfo *info = tokenize(text);

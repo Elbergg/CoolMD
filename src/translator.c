@@ -27,6 +27,31 @@ char *html_val(struct Node *node, char *text) {
             strcat(text, "</h1>");
             strcat(og, text);
             return og;
+        case HEADER2:
+            strcpy(og, "<h2>");
+            strcat(text, "</h2>");
+            strcat(og, text);
+            return og;
+        case HEADER3:
+            strcpy(og, "<h3>");
+            strcat(text, "</h3>");
+            strcat(og, text);
+            return og;
+        case HEADER4:
+            strcpy(og, "<h4>");
+            strcat(text, "</h4>");
+            strcat(og, text);
+            return og;
+        case HEADER5:
+            strcpy(og, "<h5>");
+            strcat(text, "</h5>");
+            strcat(og, text);
+            return og;
+        case HEADER6:
+            strcpy(og, "<h6>");
+            strcat(text, "</h6>");
+            strcat(og, text);
+            return og;
         case EMPHASIS:
             strcpy(og, "<em>");
             strcat(text, "</em>");
