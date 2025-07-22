@@ -129,52 +129,46 @@ void parse_hs(struct narrayInfo *nodes) {
             headnode->children = createNodeArray(10);
             addToNodeArray(info, candidates->data[i]);
             addToNodeArray(headnode->children, candidates->data[i]);
-        }
-        else if (candidates->data[i]->type == HASHNODE && count != 0)
-        {
+        } else if (candidates->data[i]->type == HASHNODE && count != 0) {
             count++;
             addToNodeArray(info, candidates->data[i]);
             addToNodeArray(headnode->children, candidates->data[i]);
-        }
-        else if (candidates->data[i]->type == HEADER1 && count != 0) {
+        } else if (candidates->data[i]->type == HEADER1 && count != 0) {
             added = 1;
             for (int j = 0; j < candidates->data[i]->children->elements; j++) {
                 addToNodeArray(headnode->children, candidates->data[i]->children->data[j]);
             }
+            free(candidates->data[i]->children->data);
+            free(candidates->data[i]->children);
             free(candidates->data[i]);
-            switch (count)
-            {
+            switch (count) {
                 case 0:
                     free(headnode);
-                break;
+                    break;
                 case 1:
                     headnode->type = HEADER2;
-                break;
+                    break;
                 case 2:
                     headnode->type = HEADER3;
-                break;
+                    break;
                 case 3:
                     headnode->type = HEADER4;
-                break;
+                    break;
                 case 4:
                     headnode->type = HEADER5;
-                break;
+                    break;
                 case 5:
                     headnode->type = HEADER6;
-                break;
+                    break;
             }
             delete_last_n_nodes(info, count);
             addToNodeArray(info, headnode);
             count = 0;
-
-        }
-        else
-        {
+        } else {
             addToNodeArray(info, candidates->data[i]);
         }
     }
-    if (!added)
-    {
+    if (!added) {
         free(headnode);
     }
     free(nodes->data[0]->children->data);
