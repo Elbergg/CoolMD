@@ -54,4 +54,16 @@ TEST(TranslatorTest, NoHeaderParagraphEmphasisTranslateTest) {
     free(result);
 }
 
+TEST(TranslatorTest, NoHeaderParagraphBoldTranslateTest) {
+    char text[] = "Hello\n__dzien dobry__\n\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    char *result = to_html(narray->data[0]);
+    ASSERT_TRUE(strcmp(result, "<p>Hello<strong>dzien dobry</strong></p>") == 0);
+    free_tarray(info);
+    free_narray(narray);
+    free(result);
+}
+
 
