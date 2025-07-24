@@ -59,13 +59,17 @@ void parse_sentences(struct narrayInfo *nodes);
 
 int parse_newline(struct Token *tokens, int index, int length, struct narrayInfo *nodes);
 
-int parse_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type);
+int parse_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
+                    char value);
 
-int parse_one_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type);
+int parse_one_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
+                        char value);
 
-int parse_two_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type);
+int parse_two_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
+                         char value);
 
-int parse_three_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type);
+int parse_three_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
+                           char value);
 
 int parse_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes);
 

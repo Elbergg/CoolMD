@@ -9,7 +9,7 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
     for (int i = index; i < length; i++) {
         switch (tokens[i].type) {
             case UNDERSCORE:
-                i = parse_understar(tokens, i, length, nodes, UNDERSCORE);
+                i = parse_understar(tokens, i, length, nodes, UNDERSCORE, '_');
                 break;
             case TEXT:
                 i = parse_text(tokens, i, length, nodes);
@@ -24,7 +24,7 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
                 i = parse_one_hashtag(tokens, i, length, nodes);
                 break;
             case STAR:
-                i = parse_understar(tokens, i, length, nodes, STAR);
+                i = parse_understar(tokens, i, length, nodes, STAR, '_');
             default: ;
         }
     }
@@ -322,17 +322,18 @@ void parse_sentences(struct narrayInfo *nodes) {
 }
 
 
-int parse_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type) {
+int parse_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
+                    char value) {
     // TODO: IMPLEMENT PARSING TWO AND THREE UNDERSCORES
     if (index + 1 < length && tokens[index + 1].type == type && index + 2 < length && tokens[index + 2].type
         ==
         type) {
-        return parse_three_understars(tokens, index, length, nodes, type);
+        return parse_three_understars(tokens, index, length, nodes, type, value);
     }
     if (index + 2 < length && tokens[index + 1].type == type) {
-        return parse_two_understars(tokens, index, length, nodes, type);
+        return parse_two_understars(tokens, index, length, nodes, type, value);
     }
-    return parse_one_understar(tokens, index, length, nodes, type);
+    return parse_one_understar(tokens, index, length, nodes, type, value);
 }
 
 struct narrayInfo *createNodeArray(int capacity) {
@@ -358,11 +359,12 @@ void addToNodeArray(struct narrayInfo *info, struct Node *node) {
 }
 
 
-int parse_two_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type) {
+int parse_two_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
+                         char value) {
     int last = 0;
     char found = 0;
     struct Node *node = calloc(1, sizeof(struct Node));
-    for (int i = index + 1; i < length; i++) {
+    for (int i = index + 2; i < length; i++) {
         if (tokens[i].type == type && tokens[i + 1].type == type && !tokens[i].parsed && !tokens[
                 i + 1].parsed) {
             found = 1;
@@ -372,16 +374,10 @@ int parse_two_understars(struct Token *tokens, int index, int length, struct nar
     }
     if (!found) {
         node->type = TEXTNODE;
-        switch (type) {
-            case STAR:
-                node->value = strdup("**");
-                break;
-            case UNDERSCORE:
-                node->value = strdup("__");
-                break;
-            default:
-                node->value = strdup("");
-        }
+        char *str = malloc(2 + 1);
+        memset(str, value, 2);
+        str[2] = '\0';
+        node->value = str;
         tokens[index].parsed = 1;
         addToNodeArray(nodes, node);
         // free(node);
@@ -401,26 +397,22 @@ int parse_two_understars(struct Token *tokens, int index, int length, struct nar
         return last;
     } else {
         node->type = TEXTNODE;
-        switch (type) {
-            case STAR:
-                node->value = strdup("****");
-                break;
-            case UNDERSCORE:
-                node->value = strdup("____");
-                break;
-            default:
-                node->value = strdup("");
-        }
+        char *str = malloc(4 + 1);
+        memset(str, value, 4);
+        str[4] = '\0';
+        node->value = str;
         addToNodeArray(nodes, node);
         free(node);
         return last;
     }
 }
 
-int parse_three_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type) {
+int parse_three_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
+                           char value) {
 }
 
-int parse_one_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type) {
+int parse_one_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
+                        char value) {
     int last = 0;
     char found = 0;
     struct Node *node = calloc(1, sizeof(struct Node));
@@ -433,16 +425,10 @@ int parse_one_understar(struct Token *tokens, int index, int length, struct narr
     }
     if (!found) {
         node->type = TEXTNODE;
-        switch (type) {
-            case STAR:
-                node->value = strdup("*");
-                break;
-            case UNDERSCORE:
-                node->value = strdup("_");
-                break;
-            default:
-                node->value = strdup("");
-        }
+        char *str = malloc(1 + 1);
+        memset(str, value, 1);
+        str[1] = '\0';
+        node->value = str;
         tokens[index].parsed = 1;
         addToNodeArray(nodes, node);
         // free(node);
@@ -460,7 +446,10 @@ int parse_one_understar(struct Token *tokens, int index, int length, struct narr
         return last;
     } else {
         node->type = TEXTNODE;
-        node->value = strdup("__");
+        char *str = malloc(1 + 1);
+        memset(str, value, 1);
+        str[1] = '\0';
+        node->value = str;
         tokens[index].parsed = 1;
         tokens[last].parsed = 1;
         addToNodeArray(nodes, node);
