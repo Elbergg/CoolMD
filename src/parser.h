@@ -17,6 +17,7 @@ enum nodeType {
     EMPHASIS,
     TEXTNODE,
     BOLD,
+    BOLDITALIC,
     SENTENCE,
     DNL,
     SNL,
