@@ -38,13 +38,6 @@ int parse_hashtags(struct Token *tokens, int index, int length, struct narrayInf
     return index;
 }
 
-
-int parse_three_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
-}
-
-int parse_two_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
-}
-
 int parse_one_hashtag(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
     struct Node *node = calloc(1, sizeof(struct Node));
     node->type = HASHSPACENODE;
@@ -54,7 +47,7 @@ int parse_one_hashtag(struct Token *tokens, int index, int length, struct narray
 }
 
 int parse_newline(struct Token *tokens, int index, int length, struct narrayInfo *nodes) {
-    if (index + 1 <= length && tokens[index + 1].type == NEWLINE) {
+    if (index + 1 < length && tokens[index + 1].type == NEWLINE) {
         struct Node *node = calloc(1, sizeof(struct Node));
         node->type = DNL;
         node->value = strdup("\n\n");
@@ -74,12 +67,8 @@ int parse_newline(struct Token *tokens, int index, int length, struct narrayInfo
 void parse_h1(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
     struct narrayInfo *candidates = nodes->data[0]->children;
-    struct Node *headnode = calloc(1, sizeof(struct Node));
-    headnode->type = HEADER1;
-    char added = 0;
     for (int i = 0; i < candidates->elements; i++) {
         if (candidates->data[i]->type == HASHSPACENODE && i < candidates->elements - 1) {
-            added = 1;
             struct Node *headnode = calloc(1, sizeof(struct Node));
             headnode->type = HEADER1;
             headnode->children = createNodeArray(10);
@@ -107,10 +96,6 @@ void parse_h1(struct narrayInfo *nodes) {
             addToNodeArray(info, candidates->data[i]);
         }
     }
-    if (!added) {
-        free(headnode);
-    }
-    // free(headnode);
     free(nodes->data[0]->children->data);
     free(nodes->data[0]->children);
     nodes->data[0]->children = info;
@@ -124,7 +109,7 @@ void parse_headers(struct narrayInfo *nodes) {
 void parse_hs(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
     struct narrayInfo *candidates = nodes->data[0]->children;
-    struct Node *headnode = calloc(1, sizeof(struct Node));
+    struct Node *headnode = NULL;
     char added = 0;
     int count = 0;
     for (int i = 0; i < candidates->elements; i++) {
@@ -173,7 +158,7 @@ void parse_hs(struct narrayInfo *nodes) {
             addToNodeArray(info, candidates->data[i]);
         }
     }
-    if (!added) {
+    if (headnode != NULL && !added) {
         free(headnode);
     }
     free(nodes->data[0]->children->data);
@@ -195,6 +180,8 @@ void parse_paragraphs(struct narrayInfo *nodes) {
     char added = 0;
     for (int i = 0; i < candidates->elements; i++) {
         if (i < candidates->elements - 1 && candidates->data[i]->type == SENTENCE) {
+            parnode = calloc(1, sizeof(struct Node));
+            parnode->type = PARAGRAPH;
             parnode->children = createNodeArray(10);
             addToNodeArray(info, candidates->data[i]);
             addToNodeArray(parnode->children, candidates->data[i]);

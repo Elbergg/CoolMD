@@ -80,10 +80,6 @@ void delete_last_n_nodes(struct narrayInfo *info, int n);
 
 int parse_one_hashtag(struct Token *tokens, int index, int length, struct narrayInfo *nodes);
 
-int parse_two_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes);
-
-int parse_three_hashtags(struct Token *tokens, int index, int length, struct narrayInfo *nodes);
-
 void parse_headers(struct narrayInfo *nodes);
 
 void parse_h1(struct narrayInfo *nodes);
