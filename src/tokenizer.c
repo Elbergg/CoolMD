@@ -169,7 +169,6 @@ void free_tarray(struct tarrayInfo *tokens) {
 }
 
 struct tarrayInfo *tokenize(char *text) {
-    // TODO: FIX MEMORY LEAKS
     struct Token *tokens;
     int array_size = 0;
     int array_index = 0;

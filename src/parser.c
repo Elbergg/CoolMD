@@ -492,14 +492,14 @@ int parse_one_understar(struct Token *tokens, int index, int length, struct narr
         return last;
     } else {
         node->type = TEXTNODE;
-        char *str = malloc(1 + 1);
-        memset(str, value, 1);
-        str[1] = '\0';
+        char *str = malloc(2 + 1);
+        memset(str, value, 2);
+        str[2] = '\0';
         node->value = str;
         tokens[index].parsed = 1;
         tokens[last].parsed = 1;
         addToNodeArray(nodes, node);
-        free(node);
+        // free(node);
         return last;
     }
 }

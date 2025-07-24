@@ -332,9 +332,7 @@ TEST(ParsetTest, TwoUnderscores) {
     // ASSERT_EQ(nodes[0].type, BODY);
     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
     ASSERT_EQ(nodes[0]->type, TEXTNODE);
-    ASSERT_EQ(nodes[1]->type, TEXTNODE);
-    ASSERT_TRUE(strcmp(nodes[0]->value, "_") == 0);
-    ASSERT_TRUE(strcmp(nodes[1]->value, "_") == 0);
+    ASSERT_TRUE(strcmp(nodes[0]->value, "__") == 0);
     free_tarray(info);
     free_narray(narray);
 }
