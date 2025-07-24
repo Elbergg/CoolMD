@@ -24,7 +24,7 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
                 i = parse_one_hashtag(tokens, i, length, nodes);
                 break;
             case STAR:
-                i = parse_understar(tokens, i, length, nodes, STAR, '_');
+                i = parse_understar(tokens, i, length, nodes, STAR, '*');
             default: ;
         }
     }
