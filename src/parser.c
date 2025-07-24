@@ -130,6 +130,7 @@ void parse_hs(struct narrayInfo *nodes) {
     for (int i = 0; i < candidates->elements; i++) {
         if (candidates->data[i]->type == HASHNODE && count == 0) {
             count++;
+            headnode = calloc(1, sizeof(struct Node));
             headnode->children = createNodeArray(10);
             addToNodeArray(info, candidates->data[i]);
             addToNodeArray(headnode->children, candidates->data[i]);
