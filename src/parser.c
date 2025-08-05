@@ -177,36 +177,66 @@ void parse_hs(struct narrayInfo *nodes) {
     nodes->data[0]->children = info;
 }
 
-void parse_blockquotes(struct narrayInfo *narray) {
+void parse_blockquotes(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
-    struct narrayInfo *candidates = narray->data[0]->children;
+    struct narrayInfo *candidates = nodes->data[0]->children;
     struct Node *blocknode = calloc(1, sizeof(struct Node));
+    struct Node *parent;
     blocknode->type = BLOCKQUOTE;
-    char block = 0;
     char adding = 0;
     char added = 0;
     int begin = 0;
     int count = 0;
-    for (int i = 0; i < candidates->elements; i++) {
+    int pos = 0;
+    int i = 0;
+    while (i < candidates->elements - 1) {
         if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding == 0) {
             begin = i;
-            count = *candidates->data[i]->value - '0' - 1;
+            pos = *candidates->data[i]->value - '0' - 1 - count;
             adding = 1;
             added = 1;
             blocknode = calloc(1, sizeof(struct Node));
             blocknode->children = createNodeArray(10);
+            blocknode->type = BLOCKQUOTE;
             addToNodeArray(blocknode->children, candidates->data[i]);
+        } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
+                   1 && i == candidates->elements - 1) {
+            adding = 0;
+            i = begin;
+            if (pos > 0) {
+                i = begin;
+            } else {
+                count = 0;
+                pos = 0;
+            }
+            addToNodeArray(info, blocknode);
+            continue;
         } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
                    1) {
             addToNodeArray(blocknode->children, candidates->data[i]);
         } else if (adding) {
             adding = 0;
-            i = begin;
+            if (pos > 0) {
+                i = begin;
+                count = pos;
+            } else {
+                count = 0;
+                pos = 0;
+            }
             addToNodeArray(info, blocknode);
+            continue;
         } else {
             addToNodeArray(info, candidates->data[i]);
         }
+        i++;
     }
+    if (!added) {
+        free(blocknode);
+    }
+    // free(parnode);
+    free(nodes->data[0]->children->data);
+    free(nodes->data[0]->children);
+    nodes->data[0]->children = info;
 }
 
 void parse_non_terminals(struct narrayInfo *nodes) {
