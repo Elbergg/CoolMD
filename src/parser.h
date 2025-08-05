@@ -30,6 +30,8 @@ enum nodeType {
     HEADER5,
     HEADER6,
     BLOCKQUOTE,
+    RIGHTNODE,
+    BLOCKLINE,
 };
 
 struct Node {
@@ -58,6 +60,8 @@ void parse_non_terminals(struct narrayInfo *nodes);
 void parse_paragraphs(struct narrayInfo *nodes);
 
 void parse_sentences(struct narrayInfo *nodes);
+
+int parse_right(struct Token *tokens, int index, int length, struct narrayInfo *nodes);
 
 int parse_newline(struct Token *tokens, int index, int length, struct narrayInfo *nodes);
 
@@ -102,6 +106,10 @@ void parse_h5(struct narrayInfo *narray);
 void parse_h6(struct narrayInfo *narray);
 
 void parse_hs(struct narrayInfo *narray);
+
+void parse_blockquotes(struct narrayInfo *narray);
+
+void parse_blocklines(struct narrayInfo *narray);
 
 
 #ifdef __cplusplus

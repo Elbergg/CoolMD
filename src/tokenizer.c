@@ -178,7 +178,7 @@ struct tarrayInfo *tokenize(char *text) {
     struct ptarrayInfo *newlines = find_matches("[\n]", text, NEWLINE);
     struct ptarrayInfo *hashtags = find_matches("[#]", text, HASH);
     struct ptarrayInfo *spaces = find_matches("[ ]", text, SPACE);
-    struct ptarrayInfo* rights = find_matches("[\n>]", text, NLRIGHT);
+    struct ptarrayInfo *rights = find_matches("[>]", text, RIGHT);
     struct ptarrayInfo **previous_matches = malloc(matches * sizeof(struct ptarrayInfo *));
     previous_matches[0] = underscore_matches;
     previous_matches[1] = star_matches;
@@ -186,8 +186,8 @@ struct tarrayInfo *tokenize(char *text) {
     previous_matches[3] = hashtags;
     previous_matches[4] = spaces;
     previous_matches[5] = rights;
-    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, 5, text);
-    struct ptarrayInfo **all_matches = malloc(matches+1 * sizeof(struct ptarrayInfo *));
+    struct ptarrayInfo *text_matches = extract_text_tokens(previous_matches, matches, text);
+    struct ptarrayInfo **all_matches = malloc((matches + 1) * sizeof(struct ptarrayInfo *));
     all_matches[0] = underscore_matches;
     all_matches[1] = star_matches;
     all_matches[2] = text_matches;
@@ -195,7 +195,7 @@ struct tarrayInfo *tokenize(char *text) {
     all_matches[4] = hashtags;
     all_matches[5] = spaces;
     all_matches[6] = rights;
-    struct tarrayInfo *sorted_tokens = sort_tokens(all_matches, matches+1);
+    struct tarrayInfo *sorted_tokens = sort_tokens(all_matches, matches + 1);
     free_ptarray(underscore_matches);
     free_ptarray(star_matches);
     free_ptarray(newlines);
