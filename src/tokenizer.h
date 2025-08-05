@@ -19,6 +19,7 @@ enum tokenType {
     HASH,
     SPACE,
     HASHSPACE,
+    NLRIGHT,
 };
 
 struct Token {

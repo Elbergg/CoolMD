@@ -236,6 +236,7 @@ struct narrayInfo *parse(struct Token *tokens, int index, int length) {
     return node;
 }
 
+
 struct Token *parse_spaces(struct Token *tokens, int *length) {
     int reductions = 0;
     struct tarrayInfo *info = createTokenArray(10);

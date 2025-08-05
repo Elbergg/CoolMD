@@ -28,7 +28,8 @@ enum nodeType {
     HEADER3,
     HEADER4,
     HEADER5,
-    HEADER6
+    HEADER6,
+    BLOCKQUOTE,
 };
 
 struct Node {
