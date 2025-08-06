@@ -180,63 +180,94 @@ void parse_hs(struct narrayInfo *nodes) {
 void parse_blockquotes(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
     struct narrayInfo *candidates = nodes->data[0]->children;
+    struct narrayInfo *queue = createNodeArray(10);
     struct Node *blocknode = calloc(1, sizeof(struct Node));
-    struct Node *parent;
+    struct Node *parent = nodes->data[0];
     blocknode->type = BLOCKQUOTE;
     char adding = 0;
     char added = 0;
-    int begin = 0;
     int count = 0;
-    int pos = 0;
     int i = 0;
-    while (i < candidates->elements - 1) {
+    int q = 0;
+    while (i < candidates->elements || queue->elements - q != 0) {
         if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding == 0) {
-            begin = i;
-            pos = *candidates->data[i]->value - '0' - 1 - count;
             adding = 1;
             added = 1;
             blocknode = calloc(1, sizeof(struct Node));
             blocknode->children = createNodeArray(10);
             blocknode->type = BLOCKQUOTE;
             addToNodeArray(blocknode->children, candidates->data[i]);
-        } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
-                   1 && i == candidates->elements - 1) {
-            adding = 0;
-            i = begin;
-            if (pos > 0) {
-                i = begin;
-            } else {
-                count = 0;
-                pos = 0;
-            }
-            addToNodeArray(info, blocknode);
-            continue;
+            addToNodeArray(queue, blocknode);
         } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
                    1) {
             addToNodeArray(blocknode->children, candidates->data[i]);
         } else if (adding) {
             adding = 0;
-            if (pos > 0) {
-                i = begin;
-                count = pos;
-            } else {
-                count = 0;
-                pos = 0;
-            }
             addToNodeArray(info, blocknode);
+        } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
+                   1 && i == candidates->elements - 1) {
+            adding = 0;
+            addToNodeArray(blocknode->children, candidates->data[i]);
+            addToNodeArray(info, blocknode);
+            free(parent->children->data);
+            free(parent->children);
+            parent->children = info;
+            parent = blocknode;
+            info = createNodeArray(10);
+            i = 0;
+            count++;
+            candidates = blocknode->children;
             continue;
-        } else {
-            addToNodeArray(info, candidates->data[i]);
         }
         i++;
     }
-    if (!added) {
-        free(blocknode);
-    }
-    // free(parnode);
-    free(nodes->data[0]->children->data);
-    free(nodes->data[0]->children);
-    nodes->data[0]->children = info;
+    // while (i < candidates->elements) {
+    //     if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding == 0) {
+    //         adding = 1;
+    //         added = 1;
+    //         blocknode = calloc(1, sizeof(struct Node));
+    //         blocknode->children = createNodeArray(10);
+    //         blocknode->type = BLOCKQUOTE;
+    //         addToNodeArray(blocknode->children, candidates->data[i]);
+    //     } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
+    //                1 && i == candidates->elements - 1) {
+    //         adding = 0;
+    //         addToNodeArray(blocknode->children, candidates->data[i]);
+    //         addToNodeArray(info, blocknode);
+    //         free(parent->children->data);
+    //         free(parent->children);
+    //         parent->children = info;
+    //         parent = blocknode;
+    //         info = createNodeArray(10);
+    //         i = 0;
+    //         count++;
+    //         candidates = blocknode->children;
+    //         continue;
+    //     } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
+    //                1) {
+    //         addToNodeArray(blocknode->children, candidates->data[i]);
+    //     } else if (adding) {
+    //         adding = 0;
+    //         addToNodeArray(info, blocknode);
+    //         free(parent->children->data);
+    //         free(parent->children);
+    //         parent->children = info;
+    //         parent = blocknode;
+    //         info = createNodeArray(10);
+    //         candidates = blocknode->children;
+    //         count++;
+    //         continue;
+    //     } else {
+    //         addToNodeArray(info, candidates->data[i]);
+    //     }
+    //     i++;
+    // }
+    // if (!added) {
+    //     free(blocknode);
+    // }
+    // free(nodes->data[0]->children->data);
+    // free(nodes->data[0]->children);
+    // nodes->data[0]->children = info;
 }
 
 void parse_non_terminals(struct narrayInfo *nodes) {
