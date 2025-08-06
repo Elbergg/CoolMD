@@ -32,6 +32,7 @@ enum nodeType {
     BLOCKQUOTE,
     RIGHTNODE,
     BLOCKLINE,
+    CODENODE,
 };
 
 struct Node {
