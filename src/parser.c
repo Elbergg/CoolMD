@@ -241,6 +241,8 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             sprintf(blocknode->value, "%d", min_value);
             addToNodeArray(info, blocknode);
             addToNodeArray(info, candidates->data[i]);
+        } else {
+            addToNodeArray(info, candidates->data[i]);
         }
         i++;
     }
