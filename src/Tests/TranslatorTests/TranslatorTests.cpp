@@ -104,3 +104,15 @@ TEST(TranslatorTest, ThreeHeadersInNewlinesTest) {
 }
 
 
+TEST(ParserTest, NestedBlockquotesTest) {
+    char text[] = ">>_He llo_\n\n>>HI\n\n>YO\n\nmelo melo\n\n>dzien dobry\n\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    char *result = to_html(narray->data[0]);
+    ASSERT_TRUE(strcmp(result, ))
+    free_tarray(info);
+    free_narray(narray);
+}
+
+

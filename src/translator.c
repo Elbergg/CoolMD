@@ -62,6 +62,11 @@ char *html_val(struct Node *node, char *text) {
             strcat(text, "</strong>");
             strcat(og, text);
             return og;
+        case BLOCKQUOTE:
+            strcpy(og, "<blockquote>");
+            strcat(text, "</blockquote>");
+            strcat(og, text);
+            return og;
         default:
             strcpy(og, "");
             strcat(text, "");

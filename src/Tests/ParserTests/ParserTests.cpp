@@ -158,10 +158,10 @@ TEST(ParserTest, BlockquoteParagraphTest) {
 
 
 TEST(ParserTest, NestedBlockquotesTest) {
-    char text[] = ">>_He llo_\n\n>>HI\n\n>YO\n\nmelo melo\n\n>dzien dobry\n\n";
-    struct tarrayInfo *info = tokenize(text);
+    char text[] = ">_He llo_\n>>HI\n>YO\n\nmelo melo\n\n>dzien dobry\n\n";
+    tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
-    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    narrayInfo *narray = parse(tokens, 0, info->elements);
     Node **nodes = narray->data[0]->children->data;
     ASSERT_EQ(nodes[0]->type, BLOCKQUOTE);
     ASSERT_EQ(nodes[0]->children->data[0]->type, BLOCKQUOTE);

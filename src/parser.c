@@ -301,13 +301,14 @@ void parse_blockquotes(struct narrayInfo *nodes) {
 void parse_non_terminals(struct narrayInfo *nodes) {
     parse_sentences(nodes);
     parse_headers(nodes);
-    parse_paragraphs(nodes);
     parse_blocklines(nodes);
+    parse_blockquotes(nodes);
+    parse_paragraphs(nodes);
 }
 
 char is_br_node(enum nodeType type) {
     switch (type) {
-        case PARAGRAPH:
+        case DNL:
             return 1;
         case CODENODE:
             return 1;
@@ -327,7 +328,7 @@ void parse_blocklines(struct narrayInfo *nodes) {
     char counting = 0;
     char text = 0;
     for (int i = 0; i < candidates->elements; i++) {
-        if (!adding && is_br_node(candidates->data[i]->type)) {
+        if (!adding && candidates->data[i]->type != RIGHTNODE) {
             addToNodeArray(info, candidates->data[i]);
         } else if (candidates->data[i]->type == RIGHTNODE && !adding) {
             added = 1;
@@ -352,11 +353,18 @@ void parse_blocklines(struct narrayInfo *nodes) {
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", count);
             count = 0;
-            addToNodeArray(blocknode->children, candidates->data[i]);
+
+            addToNodeArray(info, blocknode);
+            addToNodeArray(info, candidates->data[i]);
+        } else if (!is_br_node(candidates->data[i]->type && !adding)) {
+            adding = 0;
+            int needed = snprintf(NULL, 0, "%d", count) + 1;
+            blocknode->value = malloc(needed);
+            sprintf(blocknode->value, "%d", count);
+            count = 0;
             addToNodeArray(info, blocknode);
         } else {
-            adding = 0;
-            addToNodeArray(info, blocknode);
+            addToNodeArray(info, candidates->data[i]);
         }
     }
     if (adding) {
@@ -375,9 +383,9 @@ void parse_blocklines(struct narrayInfo *nodes) {
     nodes->data[0]->children = info;
 }
 
-void parse_areas(struct narrayInfo *nodes) {
-    parse_blockquotes(nodes);
-}
+// void parse_areas(struct narrayInfo *nodes) {
+//     parse_blockquotes(nodes);
+// }
 
 
 void parse_paragraphs(struct narrayInfo *nodes) {
@@ -434,7 +442,7 @@ struct narrayInfo *parse(struct Token *tokens, int index, int length) {
     tokens = parse_spaces(tokens, &length);
     parse_terminals(tokens, index, length, node->data[0]->children);
     parse_non_terminals(node);
-    parse_areas(node);
+    // parse_areas(node);
     // free(head);
     // free(head->children);
     // for (int i = 0; i < length; i++) {
