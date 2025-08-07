@@ -1,6 +1,7 @@
 add_executable(parsertest ParserTests.cpp
         ../../translator.h
-        ../../translator.c)
+        ../../translator.c
+        ../../preprocessor.h)
 
 # Link against Google Test and your library
 target_link_libraries(parsertest gtest gtest_main coolmd)

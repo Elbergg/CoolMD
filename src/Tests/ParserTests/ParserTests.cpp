@@ -143,6 +143,18 @@ TEST(ParserTest, TwoParagraphsSpaceTest) {
     free_narray(narray);
 }
 
+TEST(ParserTest, TwoParagraphsBetweenDNLTest) {
+    char text[] = "_He llo_\n \nHi\n\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->type, PARAGRAPH);
+    ASSERT_EQ(nodes[1]->type, PARAGRAPH);
+    free_tarray(info);
+    free_narray(narray);
+}
+
 
 TEST(ParserTest, BlockquoteParagraphTest) {
     char text[] = ">_He llo_\n\nHi\n\n";

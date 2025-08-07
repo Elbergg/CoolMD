@@ -19,6 +19,8 @@ add_library(coolmd STATIC
         translator.c
         coolmd.h
         coolmd.c
+        preprocessor.h
+        preprocessor.c
 )
 
 # Make headers available to other targets

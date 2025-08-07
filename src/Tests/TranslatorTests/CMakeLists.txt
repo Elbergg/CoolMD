@@ -1,6 +1,7 @@
 add_executable(translatortest TranslatorTests.cpp
         ../../translator.h
-        ../../translator.c)
+        ../../translator.c
+        ../../preprocessor.h)
 
 # Link against Google Test and your library
 target_link_libraries(translatortest
