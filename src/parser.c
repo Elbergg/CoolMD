@@ -177,6 +177,36 @@ void parse_hs(struct narrayInfo *nodes) {
     nodes->data[0]->children = info;
 }
 
+
+void parse_blocklines_paragraphs(struct narrayInfo *nodes, int level) {
+    struct narrayInfo *info = createNodeArray(10);
+    struct Node *parnode;
+    char adding = 0;
+    char bigger = 0;
+    for (int i = 0; i < nodes->elements; i++) {
+        if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value - '0' == level && !adding && !bigger) {
+            adding = 1;
+            parnode = calloc(1, sizeof(struct Node));
+            parnode->children = createNodeArray(10);
+            parnode->type = PARAGRAPH;
+            addToNodeArray(parnode->children, nodes->data[i]);
+        } else if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value - '0' < level && adding) {
+            addToNodeArray(parnode->children, nodes->data[i]);
+        } else if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value == '0' && adding) {
+            adding = 0;
+            bigger = 0;
+            addToNodeArray(info, parnode);
+        } else if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value - '0' > level && adding) {
+            bigger = 1;
+            adding = 0;
+            addToNodeArray(info, parnode);
+        }
+    }
+    free(nodes->data);
+    free(nodes);
+    nodes = info;
+}
+
 void parse_blockquotes(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
     struct narrayInfo *candidates = nodes->data[0]->children;
@@ -195,6 +225,7 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             int needed = snprintf(NULL, 0, "%d", min_value) + 1;
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", min_value);
+            parse_blocklines_paragraphs(blocknode->children, min_value);
             addToNodeArray(info, blocknode);
         }
         if (i == candidates->elements) {
@@ -203,7 +234,7 @@ void parse_blockquotes(struct narrayInfo *nodes) {
                 free(info);
                 break;
             }
-            q++;
+            q++; //advance the queue
             i = 0;
             free(parent->children->data);
             free(parent->children);
@@ -219,7 +250,7 @@ void parse_blockquotes(struct narrayInfo *nodes) {
         }
         if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - parent_count > 0 && adding ==
             0) {
-            adding = 1;
+            adding = 1; //new blockquote
             added = 1;
             blocknode = calloc(1, sizeof(struct Node));
             blocknode->children = createNodeArray(10);
@@ -228,17 +259,15 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             addToNodeArray(blocknode->children, candidates->data[i]);
             addToNodeArray(queue, blocknode);
         } else if (candidates->data[i]->type == BLOCKLINE &&
-                   adding ==
-                   1) {
-            // if (*candidates->data[i]->value - '0' < min_value) {
-            //     min_value = *candidates->data[i]->value - '0';
-            // }
+                   adding) {
+            //continue adding
             addToNodeArray(blocknode->children, candidates->data[i]);
         } else if (adding) {
             adding = 0;
             int needed = snprintf(NULL, 0, "%d", min_value) + 1;
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", min_value);
+            parse_blocklines_paragraphs(blocknode->children, min_value);
             addToNodeArray(info, blocknode);
             addToNodeArray(info, candidates->data[i]);
         } else {
@@ -292,7 +321,6 @@ void parse_blocklines(struct narrayInfo *nodes) {
     char added = 0;
     int count = 0;
     char counting = 0;
-    char text = 0;
     for (int i = 0; i < candidates->elements; i++) {
         if (!adding && candidates->data[i]->type != RIGHTNODE) {
             addToNodeArray(info, candidates->data[i]);
@@ -306,14 +334,15 @@ void parse_blocklines(struct narrayInfo *nodes) {
             blocknode->children = createNodeArray(10);
             // addToNodeArray(info, candidates->data[i]);
             addToNodeArray(blocknode->children, candidates->data[i]);
-        } else if (adding && counting && candidates->data[i]->type != RIGHTNODE && !text && !is_br_node(
+        } else if (adding && counting && candidates->data[i]->type != RIGHTNODE && !is_br_node(
                        candidates->data[i]->type)) {
             counting = 0;
             addToNodeArray(blocknode->children, candidates->data[i]);
         } else if (candidates->data[i]->type == RIGHTNODE && adding && counting) {
             count++;
             addToNodeArray(blocknode->children, candidates->data[i]);
-        } else if (is_br_node(candidates->data[i]->type) && adding) {
+        } else if (adding && (candidates->data[i]->type ==
+                              RIGHTNODE || is_br_node(candidates->data[i]->type))) {
             adding = 0;
             int needed = snprintf(NULL, 0, "%d", count) + 1;
             blocknode->value = malloc(needed);
@@ -321,15 +350,9 @@ void parse_blocklines(struct narrayInfo *nodes) {
             count = 0;
             parse_empty_blocklines(blocknode);
             addToNodeArray(info, blocknode);
-            addToNodeArray(info, candidates->data[i]);
-        } else if (!is_br_node(candidates->data[i]->type && !adding)) {
-            adding = 0;
-            int needed = snprintf(NULL, 0, "%d", count) + 1;
-            blocknode->value = malloc(needed);
-            sprintf(blocknode->value, "%d", count);
-            count = 0;
-            parse_empty_blocklines(blocknode);
-            addToNodeArray(info, blocknode);
+            i--;
+        } else if (!is_br_node(candidates->data[i]->type) && adding) {
+            addToNodeArray(blocknode->children, candidates->data[i]);
         } else {
             addToNodeArray(info, candidates->data[i]);
         }
