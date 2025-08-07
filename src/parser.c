@@ -420,9 +420,9 @@ void parse_paragraphs(struct narrayInfo *nodes) {
             addToNodeArray(info, candidates->data[i]);
         }
     }
-    if (!added) {
-        free(parnode);
-    }
+    // if (!added) {
+    //     free(parnode);
+    // }
     // free(parnode);
     free(nodes->data[0]->children->data);
     free(nodes->data[0]->children);
