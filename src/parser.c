@@ -178,7 +178,8 @@ void parse_hs(struct narrayInfo *nodes) {
 }
 
 
-void parse_blocklines_paragraphs(struct narrayInfo *nodes, int level) {
+void parse_blocklines_paragraphs(struct narrayInfo **children, int level) {
+    struct narrayInfo *nodes = *children;
     struct narrayInfo *info = createNodeArray(10);
     struct Node *parnode;
     char adding = 0;
@@ -196,15 +197,26 @@ void parse_blocklines_paragraphs(struct narrayInfo *nodes, int level) {
             adding = 0;
             bigger = 0;
             addToNodeArray(info, parnode);
+            addToNodeArray(info, nodes->data[i]);
+        } else if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value == '0') {
+            adding = 0;
+            bigger = 0;
+            addToNodeArray(info, nodes->data[i]);
         } else if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value - '0' > level && adding) {
             bigger = 1;
             adding = 0;
             addToNodeArray(info, parnode);
+            addToNodeArray(info, nodes->data[i]);
+        } else {
+            addToNodeArray(info, nodes->data[i]);
         }
+    }
+    if (adding) {
+        addToNodeArray(info, parnode);
     }
     free(nodes->data);
     free(nodes);
-    nodes = info;
+    *children = info;
 }
 
 void parse_blockquotes(struct narrayInfo *nodes) {
@@ -225,7 +237,7 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             int needed = snprintf(NULL, 0, "%d", min_value) + 1;
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", min_value);
-            parse_blocklines_paragraphs(blocknode->children, min_value);
+            parse_blocklines_paragraphs(&blocknode->children, min_value);
             addToNodeArray(info, blocknode);
         }
         if (i == candidates->elements) {
@@ -267,7 +279,7 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             int needed = snprintf(NULL, 0, "%d", min_value) + 1;
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", min_value);
-            parse_blocklines_paragraphs(blocknode->children, min_value);
+            parse_blocklines_paragraphs(&blocknode->children, min_value);
             addToNodeArray(info, blocknode);
             addToNodeArray(info, candidates->data[i]);
         } else {
