@@ -180,6 +180,8 @@ TEST(ParserTest, NestedBlockquotesTest) {
     ASSERT_EQ(nodes[1]->type, DNL);
     ASSERT_EQ(nodes[2]->type, PARAGRAPH);
     ASSERT_EQ(nodes[3]->type, BLOCKQUOTE);
+    ASSERT_EQ(nodes[0]->children->data[0]->type, PARAGRAPH);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, BLOCKQUOTE);
     free_tarray(info);
     free_narray(narray);
 }
