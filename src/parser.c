@@ -248,56 +248,6 @@ void parse_blockquotes(struct narrayInfo *nodes) {
     }
     free(queue->data);
     free(queue);
-    // if (!added) {
-    //     free(blocknode);
-    // }
-    // while (i < candidates->elements) {
-    //     if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding == 0) {
-    //         adding = 1;
-    //         added = 1;
-    //         blocknode = calloc(1, sizeof(struct Node));
-    //         blocknode->children = createNodeArray(10);
-    //         blocknode->type = BLOCKQUOTE;
-    //         addToNodeArray(blocknode->children, candidates->data[i]);
-    //     } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
-    //                1 && i == candidates->elements - 1) {
-    //         adding = 0;
-    //         addToNodeArray(blocknode->children, candidates->data[i]);
-    //         addToNodeArray(info, blocknode);
-    //         free(parent->children->data);
-    //         free(parent->children);
-    //         parent->children = info;
-    //         parent = blocknode;
-    //         info = createNodeArray(10);
-    //         i = 0;
-    //         count++;
-    //         candidates = blocknode->children;
-    //         continue;
-    //     } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - count > 0 && adding ==
-    //                1) {
-    //         addToNodeArray(blocknode->children, candidates->data[i]);
-    //     } else if (adding) {
-    //         adding = 0;
-    //         addToNodeArray(info, blocknode);
-    //         free(parent->children->data);
-    //         free(parent->children);
-    //         parent->children = info;
-    //         parent = blocknode;
-    //         info = createNodeArray(10);
-    //         candidates = blocknode->children;
-    //         count++;
-    //         continue;
-    //     } else {
-    //         addToNodeArray(info, candidates->data[i]);
-    //     }
-    //     i++;
-    // }
-    // if (!added) {
-    //     free(blocknode);
-    // }
-    // free(nodes->data[0]->children->data);
-    // free(nodes->data[0]->children);
-    // nodes->data[0]->children = info;
 }
 
 void parse_non_terminals(struct narrayInfo *nodes) {
@@ -319,6 +269,20 @@ char is_br_node(enum nodeType type) {
     }
 }
 
+
+void parse_empty_blocklines(struct Node *node) {
+    struct narrayInfo *candidates = node->children;
+    for (int i = 0; i < candidates->elements; i++) {
+        if (candidates->data[i]->type != RIGHTNODE && candidates->data[i]->type != SNL && candidates->data[i]->type !=
+            DNL) {
+            return;
+        }
+    }
+    int needed = snprintf(NULL, 0, "%d", 0) + 1;
+    free(node->value);
+    node->value = malloc(needed);
+    sprintf(node->value, "%d", 0);
+}
 
 void parse_blocklines(struct narrayInfo *nodes) {
     struct narrayInfo *info = createNodeArray(10);
@@ -355,7 +319,7 @@ void parse_blocklines(struct narrayInfo *nodes) {
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", count);
             count = 0;
-
+            parse_empty_blocklines(blocknode);
             addToNodeArray(info, blocknode);
             addToNodeArray(info, candidates->data[i]);
         } else if (!is_br_node(candidates->data[i]->type && !adding)) {
@@ -364,6 +328,7 @@ void parse_blocklines(struct narrayInfo *nodes) {
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", count);
             count = 0;
+            parse_empty_blocklines(blocknode);
             addToNodeArray(info, blocknode);
         } else {
             addToNodeArray(info, candidates->data[i]);
@@ -374,6 +339,7 @@ void parse_blocklines(struct narrayInfo *nodes) {
         int needed = snprintf(NULL, 0, "%d", count) + 1;
         blocknode->value = malloc(needed);
         sprintf(blocknode->value, "%d", count);
+        parse_empty_blocklines(blocknode);
         addToNodeArray(info, blocknode);
     }
     // free(parnode);
