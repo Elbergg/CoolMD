@@ -227,12 +227,12 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             min_value = *candidates->data[i]->value - '0';
             addToNodeArray(blocknode->children, candidates->data[i]);
             addToNodeArray(queue, blocknode);
-        } else if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - parent_count > 0 &&
+        } else if (candidates->data[i]->type == BLOCKLINE &&
                    adding ==
                    1) {
-            if (*candidates->data[i]->value - '0' < min_value) {
-                min_value = *candidates->data[i]->value - '0';
-            }
+            // if (*candidates->data[i]->value - '0' < min_value) {
+            //     min_value = *candidates->data[i]->value - '0';
+            // }
             addToNodeArray(blocknode->children, candidates->data[i]);
         } else if (adding) {
             adding = 0;
