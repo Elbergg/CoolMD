@@ -376,9 +376,6 @@ void parse_blocklines(struct narrayInfo *nodes) {
         sprintf(blocknode->value, "%d", count);
         addToNodeArray(info, blocknode);
     }
-    if (!added) {
-        free(blocknode);
-    }
     // free(parnode);
     free(nodes->data[0]->children->data);
     free(nodes->data[0]->children);
