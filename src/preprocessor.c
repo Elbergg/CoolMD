@@ -12,6 +12,7 @@
 
 char *preprocess(char *text) {
     char *new_text = malloc(strlen(text) + 1);
+    new_text[0] = '\0';
     char *fragment = strsep(&text, "\n");
     while (text != NULL) {
         strcat(new_text, trimwhitespace(fragment));

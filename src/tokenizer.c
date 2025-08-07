@@ -206,7 +206,7 @@ struct tarrayInfo *tokenize(char *text) {
     free_ptarray(rights);
     free(previous_matches);
     free(all_matches);
-
+    free(text);
 
     return sorted_tokens;
 }
