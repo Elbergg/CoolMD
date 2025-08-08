@@ -14,10 +14,17 @@ char *preprocess(char *text) {
     char *new_text = malloc(strlen(text) + 1);
     new_text[0] = '\0';
     char *fragment = strsep(&text, "\n");
+    if (text == NULL) {
+        strcat(new_text, trimwhitespace(fragment));
+        return new_text;
+    }
     while (text != NULL) {
         strcat(new_text, trimwhitespace(fragment));
         strcat(new_text, "\n");
         fragment = strsep(&text, "\n");
+    }
+    if (text == NULL && fragment != NULL) {
+        strcat(new_text, trimwhitespace(fragment));
     }
     return new_text;
 }

@@ -163,7 +163,18 @@ TEST(ParserTest, BlockquoteParagraphTest) {
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     Node **nodes = narray->data[0]->children->data;
     ASSERT_EQ(nodes[0]->type, BLOCKQUOTE);
-    ASSERT_EQ(nodes[1]->type, PARAGRAPH);
+    ASSERT_EQ(nodes[2]->type, PARAGRAPH);
+    free_tarray(info);
+    free_narray(narray);
+}
+
+TEST(ParserTest, BlockquoteNoNlTest) {
+    char text[] = ">_He llo_";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->type, BLOCKQUOTE);
     free_tarray(info);
     free_narray(narray);
 }
