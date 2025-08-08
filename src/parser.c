@@ -191,7 +191,7 @@ void parse_blocklines_paragraphs(struct narrayInfo **children, int level) {
             parnode->children = createNodeArray(10);
             parnode->type = PARAGRAPH;
             addToNodeArray(parnode->children, nodes->data[i]);
-        } else if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value - '0' < level && adding) {
+        } else if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value - '0' <= level && adding) {
             addToNodeArray(parnode->children, nodes->data[i]);
         } else if (nodes->data[i]->type == BLOCKLINE && *nodes->data[i]->value == '0' && adding) {
             adding = 0;
