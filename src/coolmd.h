@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 
-char *compile(char *text);
+char *compile(const char *text);
 
 #ifdef __cplusplus
 }
