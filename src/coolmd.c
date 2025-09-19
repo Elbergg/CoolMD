@@ -3,7 +3,7 @@
 //
 #include "coolmd.h"
 
-char *compile(char *text) {
+char *compile(const char *text) {
     struct tarrayInfo *tarray = tokenize(text);
     struct narrayInfo *narray = parse(tarray->data, 0, tarray->elements);
     char *result = to_html(narray->data[0]);
