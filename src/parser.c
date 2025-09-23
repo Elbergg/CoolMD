@@ -699,6 +699,10 @@ int parse_one_understar(struct Token *tokens, int index, int length, struct narr
         under_node->value = strdup(temp_str);
         addToNodeArray(node->children, under_node);
         parse_terminals(tokens, index + 1, last, node->children);
+        struct Node *under_endnode = calloc(1, sizeof(struct Node));
+        under_endnode->type = UNDERSTAR;
+        under_node->value = strdup(temp_str);
+        addToNodeArray(node->children, under_endnode);
         // free(node);
         return last;
     } else {
@@ -710,6 +714,7 @@ int parse_one_understar(struct Token *tokens, int index, int length, struct narr
         tokens[index].parsed = 1;
         tokens[last].parsed = 1;
         addToNodeArray(nodes, node);
+
         // free(node);
         return last;
     }

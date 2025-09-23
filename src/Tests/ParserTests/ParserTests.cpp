@@ -17,6 +17,7 @@ TEST(ParserTest, EmphasisUnderscoreTest) {
     ASSERT_EQ(nodes[0]->type, EMPHASIS);
     ASSERT_EQ(nodes[0]->children->data[0]->type, UNDERSTAR);
     ASSERT_EQ(nodes[0]->children->data[1]->type, TEXTNODE);
+    ASSERT_EQ(nodes[0]->children->data[2]->type, UNDERSTAR);
     ASSERT_TRUE(strcmp(nodes[0]->children->data[1]->value, "Hello") == 0);
     free_tarray(info);
     free_narray(narray);
@@ -407,8 +408,8 @@ TEST(ParsetTest, NotEvenUnderscores) {
     // ASSERT_EQ(nodes[0].type, BODY);
     // ASSERT_EQ(nodes[0].children->data[0].type, PARAGRAPH);
     ASSERT_EQ(nodes[0]->type, EMPHASIS);
-    ASSERT_EQ(nodes[0]->children->data[0]->type, TEXTNODE);
-    ASSERT_TRUE(strcmp(nodes[0]->children->data[0]->value, "Hello") == 0);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, TEXTNODE);
+    ASSERT_TRUE(strcmp(nodes[0]->children->data[1]->value, "Hello") == 0);
     ASSERT_TRUE(strcmp(nodes[1]->value, "_") == 0);
     free_tarray(info);
     free_narray(narray);
