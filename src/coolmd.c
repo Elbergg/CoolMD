@@ -12,7 +12,7 @@ char *compile(const char *text) {
     return result;
 }
 
-struct narray *compile_to_nodes(const char *text) {
+struct narrayInfo *compile_to_nodes(const char *text) {
     struct tarrayInfo *tarray = tokenize(text);
     struct narrayInfo *narray = parse(tarray->data, 0, tarray->elements);
     free_tarray(tarray);
