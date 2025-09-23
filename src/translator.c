@@ -76,20 +76,6 @@ char *html_val(struct Node *node, char *text) {
 }
 
 
-// char *to_html(struct Node *node) {
-//     char stop = 0;
-//     while (!stop) {
-//
-//         char *result = malloc(1000);
-//         char *temp = malloc(1000);
-//         for (int i = 0; i < node->children->elements; i++) {
-//             strcpy(temp, to_html(&node->children->data[i])); //recurse into
-//             result = strcat(result, temp);
-//         }
-//     }
-// }
-
-
 char *to_html(struct Node *node) {
     // TODO: USE ITERATION INSTEAD OF RECURSION
     if (node->children == NULL) {
@@ -104,6 +90,37 @@ char *to_html(struct Node *node) {
         free(val);
     }
     char *val = html_val(node, result);
+    strcpy(result, val);
+    free(val);
+    return result;
+}
+
+
+char *raw_val(struct Node *node, char *text) {
+    char *og = calloc(1, strlen(text) + 100);
+    switch (node->type) {
+        default:
+            strcpy(og, "");
+            strcat(text, "");
+            strcat(og, text);
+            return og;
+    }
+}
+
+
+char *to_raw(struct Node *node) {
+    // TODO: USE ITERATION INSTEAD OF RECURSION
+    if (node->children == NULL) {
+        return node->value;
+    }
+    // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
+    char *result = calloc(1, 1000);
+    for (int i = 0; i < node->children->elements; i++) {
+        char *val = to_raw(node->children->data[i]);
+        result = strcat(result, val);
+        free(val);
+    }
+    char *val = raw_val(node, result);
     strcpy(result, val);
     free(val);
     return result;

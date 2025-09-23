@@ -13,6 +13,8 @@ extern "C" {
 
 char *to_html(struct Node *narray);
 
+char *to_raw(struct Node *narray);
+
 #ifdef __cplusplus
 }
 #endif //TRANSLATOR_H

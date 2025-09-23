@@ -33,6 +33,7 @@ enum nodeType {
     RIGHTNODE,
     BLOCKLINE,
     CODENODE,
+    UNDERSTAR,
 };
 
 struct Node {

@@ -18,3 +18,6 @@ struct narrayInfo *compile_to_nodes(const char *text) {
     free_tarray(tarray);
     return narray;
 }
+
+char *nodes_to_raw(struct narrayInfo *narray) {
+}

@@ -534,7 +534,6 @@ void parse_sentences(struct narrayInfo *nodes) {
 
 int parse_understar(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
                     char value) {
-    // TODO: IMPLEMENT PARSING TWO AND THREE UNDERSCORES
     if (index + 1 < length && tokens[index + 1].type == type && index + 2 < length && tokens[index + 2].type
         ==
         type) {
@@ -694,6 +693,11 @@ int parse_one_understar(struct Token *tokens, int index, int length, struct narr
         tokens[last].parsed = 1;
         node->children = createNodeArray(10);
         addToNodeArray(nodes, node);
+        struct Node *under_node = calloc(1, sizeof(struct Node));
+        under_node->type = UNDERSTAR;
+        char temp_str[2] = {value, '\0'};
+        under_node->value = strdup(temp_str);
+        addToNodeArray(node->children, under_node);
         parse_terminals(tokens, index + 1, last, node->children);
         // free(node);
         return last;
