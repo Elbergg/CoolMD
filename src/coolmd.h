@@ -11,7 +11,7 @@ extern "C" {
 
 char *compile_to_html(const char *text);
 
-struct narray *compile_to_nodes(const char *text);
+struct narrayInfo *compile_to_nodes(const char *text);
 
 #ifdef __cplusplus
 }
