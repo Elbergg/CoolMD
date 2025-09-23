@@ -98,7 +98,7 @@ void parse_h1(struct narrayInfo *nodes) {
             }
             if (i <
                 candidates
-                ->elements && candidates->data[i]->type == SNL) {
+                ->elements && (candidates->data[i]->type == SNL || candidates->data[i]->type == DNL)) {
                 addToNodeArray(headnode->children, candidates->data[i]);
             }
             delete_last_n_nodes(info, 1);
