@@ -111,7 +111,7 @@ char *raw_val(struct Node *node, char *text) {
 char *to_raw(struct Node *node) {
     // TODO: USE ITERATION INSTEAD OF RECURSION
     if (node->children == NULL) {
-        return node->value;
+        return strdup(node->value);
     }
     // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
     char *result = calloc(1, 1000);

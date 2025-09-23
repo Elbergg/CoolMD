@@ -700,8 +700,9 @@ int parse_one_understar(struct Token *tokens, int index, int length, struct narr
         addToNodeArray(node->children, under_node);
         parse_terminals(tokens, index + 1, last, node->children);
         struct Node *under_endnode = calloc(1, sizeof(struct Node));
+        char temp_str2[2] = {value, '\0'};
         under_endnode->type = UNDERSTAR;
-        under_node->value = strdup(temp_str);
+        under_endnode->value = strdup(temp_str2);
         addToNodeArray(node->children, under_endnode);
         // free(node);
         return last;
