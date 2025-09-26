@@ -169,7 +169,7 @@ void free_tarray(struct tarrayInfo *tokens) {
 }
 
 struct tarrayInfo *tokenize(char *text) {
-    text = preprocess(text);
+    // /text = preprocess(text);
     struct Token *tokens;
     int array_size = 0;
     int array_index = 0;
@@ -206,7 +206,7 @@ struct tarrayInfo *tokenize(char *text) {
     free_ptarray(rights);
     free(previous_matches);
     free(all_matches);
-    free(text);
+    // free(text);
 
     return sorted_tokens;
 }

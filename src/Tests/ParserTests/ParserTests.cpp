@@ -146,7 +146,7 @@ TEST(ParserTest, TwoParagraphsSpaceTest) {
 }
 
 TEST(ParserTest, TwoParagraphsBetweenDNLTest) {
-    char text[] = "_He llo_\n \nHi\n\n";
+    char text[] = "_He llo_\n\nHi\n\n";
     struct tarrayInfo *info = tokenize(text);
     Token *tokens = info->data;
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
