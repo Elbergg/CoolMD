@@ -115,7 +115,7 @@ TEST(ParserTest, ParagraphTest) {
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     Node **nodes = narray->data[0]->children->data;
     ASSERT_EQ(nodes[0]->type, PARAGRAPH);
-    ASSERT_EQ(nodes[1]->type, SENTENCE);
+    ASSERT_EQ(nodes[1]->type, PARAGRAPH);
     free_tarray(info);
     free_narray(narray);
 }
@@ -127,7 +127,7 @@ TEST(ParserTest, ParagraphSpaceTest) {
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     Node **nodes = narray->data[0]->children->data;
     ASSERT_EQ(nodes[0]->type, PARAGRAPH);
-    ASSERT_EQ(nodes[1]->type, SENTENCE);
+    ASSERT_EQ(nodes[1]->type, PARAGRAPH);
     free_tarray(info);
     free_narray(narray);
 }

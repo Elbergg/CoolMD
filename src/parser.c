@@ -430,6 +430,68 @@ void parse_paragraphs(struct narrayInfo *nodes) {
     nodes->data[0]->children = info;
 }
 
+
+char is_final_node(enum nodeType type) {
+    switch (type) {
+        case PARAGRAPH:
+            return 1;
+            break;
+        case HEADER1:
+            return 1;
+            break;
+        case HEADER2:
+            return 1;
+            break;
+        case HEADER3:
+            return 1;
+            break;
+        case HEADER4:
+            return 1;
+            break;
+        case HEADER5:
+            return 1;
+            break;
+        case HEADER6:
+            return 1;
+            break;
+        case BLOCKQUOTE:
+            return 1;
+            break;
+        case BODY:
+            return 1;
+            break;
+        default:
+            return 0;
+    }
+}
+
+struct narrayInfo *parse_left_outs(struct narrayInfo *nodes) {
+    struct narrayInfo *candidates = nodes->data[0]->children;
+    struct narrayInfo *info = createNodeArray(10);
+    struct Node *parnode;
+    char added = 0;
+    for (int i = 0; i < candidates->elements; i++) {
+        if (!is_final_node(candidates->data[i]->type)) {
+            parnode = calloc(1, sizeof(struct Node));
+            parnode->type = PARAGRAPH;
+            parnode->children = createNodeArray(10);
+            // addToNodeArray(info, candidates->data[i]);
+            addToNodeArray(parnode->children, candidates->data[i]);
+            i++;
+            while (i < candidates->elements && !is_final_node(candidates->data[i]->type)) {
+                addToNodeArray(parnode->children, candidates->data[i]);
+            }
+            addToNodeArray(info, parnode);
+        } else {
+            addToNodeArray(info, candidates->data[i]);
+        }
+    }
+    free(nodes->data[0]->children->data);
+    free(nodes->data[0]->children);
+    nodes->data[0]->children = info;
+}
+
+
 struct narrayInfo *parse(struct Token *tokens, int index, int length) {
     struct narrayInfo *node = createNodeArray(1);
     struct Node *head = calloc(1, sizeof(struct Node));
@@ -442,6 +504,7 @@ struct narrayInfo *parse(struct Token *tokens, int index, int length) {
     tokens = parse_spaces(tokens, &length);
     parse_terminals(tokens, index, length, node->data[0]->children);
     parse_non_terminals(node);
+    parse_left_outs(node);
     // parse_areas(node);
     // free(head);
     // free(head->children);

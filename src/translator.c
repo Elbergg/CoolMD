@@ -67,9 +67,6 @@ char *html_val(struct Node *node, char *text) {
             strcat(text, "</blockquote>");
             strcat(og, text);
             return og;
-        case SNL:
-            strcat(text, "<br>");
-            return text;
         default:
             strcpy(og, "");
             strcat(text, "");
