@@ -208,7 +208,9 @@ void parse_blocklines_paragraphs(struct narrayInfo **children, int level) {
             addToNodeArray(info, parnode);
             addToNodeArray(info, nodes->data[i]);
         } else {
-            addToNodeArray(info, nodes->data[i]);
+            addToNodeArray(parnode->children, nodes->data[i]);
+            addToNodeArray(info, parnode);
+            adding = 0;
         }
     }
     if (adding) {
@@ -220,6 +222,8 @@ void parse_blocklines_paragraphs(struct narrayInfo **children, int level) {
 }
 
 void parse_blockquotes(struct narrayInfo *nodes) {
+    //this is a mess man
+    //TODO MAKE IT LESS MESSIER
     struct narrayInfo *info = createNodeArray(10);
     struct narrayInfo *candidates = nodes->data[0]->children;
     struct narrayInfo *queue = createNodeArray(10);
@@ -276,6 +280,9 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             addToNodeArray(blocknode->children, candidates->data[i]);
         } else if (adding) {
             adding = 0;
+            if (candidates->data[i]->type == DNL) {
+                addToNodeArray(blocknode->children, candidates->data[i]);
+            }
             int needed = snprintf(NULL, 0, "%d", min_value) + 1;
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", min_value);
