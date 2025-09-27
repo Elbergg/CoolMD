@@ -165,7 +165,7 @@ TEST(ParserTest, BlockquoteParagraphTest) {
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     Node **nodes = narray->data[0]->children->data;
     ASSERT_EQ(nodes[0]->type, BLOCKQUOTE);
-    ASSERT_EQ(nodes[2]->type, PARAGRAPH);
+    ASSERT_EQ(nodes[1]->type, PARAGRAPH);
     free_tarray(info);
     free_narray(narray);
 }
@@ -201,9 +201,8 @@ TEST(ParserTest, NestedBlockquotesTest) {
     Node **nodes = narray->data[0]->children->data;
     ASSERT_EQ(nodes[0]->type, BLOCKQUOTE);
     ASSERT_EQ(nodes[0]->children->data[0]->type, PARAGRAPH);
-    ASSERT_EQ(nodes[1]->type, DNL);
-    ASSERT_EQ(nodes[2]->type, PARAGRAPH);
-    ASSERT_EQ(nodes[3]->type, BLOCKQUOTE);
+    ASSERT_EQ(nodes[1]->type, PARAGRAPH);
+    ASSERT_EQ(nodes[2]->type, BLOCKQUOTE);
     ASSERT_EQ(nodes[0]->children->data[0]->type, PARAGRAPH);
     ASSERT_EQ(nodes[0]->children->data[1]->type, BLOCKQUOTE);
     free_tarray(info);
@@ -218,7 +217,7 @@ TEST(ParserTest, ParagraphSnlSpaceTest) {
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     Node **nodes = narray->data[0]->children->data;
     ASSERT_EQ(nodes[0]->type, PARAGRAPH);
-    ASSERT_EQ(nodes[1]->type, SENTENCE);
+    ASSERT_EQ(nodes[1]->type, PARAGRAPH);
     free_tarray(info);
     free_narray(narray);
 }
@@ -230,7 +229,7 @@ TEST(ParserTest, Paragraph2Test) {
     Token *tokens = info->data;
     struct narrayInfo *narray = parse(tokens, 0, info->elements);
     Node **nodes = narray->data[0]->children->data;
-    ASSERT_EQ(nodes[0]->type, SENTENCE);
+    ASSERT_EQ(nodes[0]->type, PARAGRAPH);
     free_tarray(info);
     free_narray(narray);
 }

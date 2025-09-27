@@ -207,10 +207,12 @@ void parse_blocklines_paragraphs(struct narrayInfo **children, int level) {
             adding = 0;
             addToNodeArray(info, parnode);
             addToNodeArray(info, nodes->data[i]);
-        } else {
+        } else if (adding) {
             addToNodeArray(parnode->children, nodes->data[i]);
             addToNodeArray(info, parnode);
             adding = 0;
+        } else {
+            addToNodeArray(info, nodes->data[i]);
         }
     }
     if (adding) {
@@ -288,7 +290,7 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             sprintf(blocknode->value, "%d", min_value);
             parse_blocklines_paragraphs(&blocknode->children, min_value);
             addToNodeArray(info, blocknode);
-            addToNodeArray(info, candidates->data[i]);
+            // addToNodeArray(info, candidates->data[i]);
         } else {
             addToNodeArray(info, candidates->data[i]);
         }
@@ -472,7 +474,7 @@ char is_final_node(enum nodeType type) {
     }
 }
 
-struct narrayInfo *parse_left_outs(struct narrayInfo *nodes) {
+void parse_left_outs(struct narrayInfo *nodes) {
     struct narrayInfo *candidates = nodes->data[0]->children;
     struct narrayInfo *info = createNodeArray(10);
     struct Node *parnode;
@@ -487,6 +489,10 @@ struct narrayInfo *parse_left_outs(struct narrayInfo *nodes) {
             i++;
             while (i < candidates->elements && !is_final_node(candidates->data[i]->type)) {
                 addToNodeArray(parnode->children, candidates->data[i]);
+                i++;
+            }
+            if (i < candidates->elements && is_final_node(candidates->data[i]->type)) {
+                addToNodeArray(info, candidates->data[i]);
             }
             addToNodeArray(info, parnode);
         } else {
