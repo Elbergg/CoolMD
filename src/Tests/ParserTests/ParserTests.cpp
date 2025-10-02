@@ -181,6 +181,18 @@ TEST(ParserTest, BlockquoteNoNlTest) {
     free_narray(narray);
 }
 
+TEST(ParserTest, BlockQuoteHeaderTest) {
+    char text[] = ">_He llo_\n# halo\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->type, BLOCKQUOTE);
+    ASSERT_EQ(nodes[1]->type, HEADER1);
+    free_tarray(info);
+    free_narray(narray);
+}
+
 TEST(ParserTest, DoubleBlockquoteTest) {
     char text[] = ">_He llo_\n>Hi";
     struct tarrayInfo *info = tokenize(text);
@@ -192,6 +204,7 @@ TEST(ParserTest, DoubleBlockquoteTest) {
     free_tarray(info);
     free_narray(narray);
 }
+
 
 TEST(ParserTest, NestedBlockquotesTest) {
     char text[] = ">_He llo_\n>>HI\n>YO\n> \n>pozdrawiam\n\nmelo melo\n\n>dzien dobry\n\n";

@@ -312,6 +312,8 @@ char is_br_node(enum nodeType type) {
     switch (type) {
         case DNL:
             return 1;
+        case SNL:
+            return 1;
         case CODENODE:
             return 1;
         default:
@@ -362,16 +364,15 @@ void parse_blocklines(struct narrayInfo *nodes) {
         } else if (candidates->data[i]->type == RIGHTNODE && adding && counting) {
             count++;
             addToNodeArray(blocknode->children, candidates->data[i]);
-        } else if (adding && (candidates->data[i]->type ==
-                              RIGHTNODE || is_br_node(candidates->data[i]->type))) {
+        } else if (adding && is_br_node(candidates->data[i]->type)) {
             adding = 0;
             int needed = snprintf(NULL, 0, "%d", count) + 1;
             blocknode->value = malloc(needed);
             sprintf(blocknode->value, "%d", count);
             count = 0;
+            addToNodeArray(blocknode->children, candidates->data[i]);
             parse_empty_blocklines(blocknode);
             addToNodeArray(info, blocknode);
-            i--;
         } else if (!is_br_node(candidates->data[i]->type) && adding) {
             addToNodeArray(blocknode->children, candidates->data[i]);
         } else {
