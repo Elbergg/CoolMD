@@ -493,10 +493,10 @@ void parse_left_outs(struct narrayInfo *nodes) {
                 addToNodeArray(parnode->children, candidates->data[i]);
                 i++;
             }
+            addToNodeArray(info, parnode);
             if (i < candidates->elements && is_final_node(candidates->data[i]->type)) {
                 addToNodeArray(info, candidates->data[i]);
             }
-            addToNodeArray(info, parnode);
         } else {
             addToNodeArray(info, candidates->data[i]);
         }
