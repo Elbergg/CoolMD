@@ -262,11 +262,11 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             adding = 0;
             candidates = parent->children;
             added = 0;
-        }
-        if (parent->type == BLOCKQUOTE) {
+        } else if (parent->type == BLOCKQUOTE) {
             parent_count = *parent->value - '0';
         }
-        if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - parent_count > 0 && adding ==
+        if (candidates->data[i]->type == BLOCKLINE && *candidates->data[i]->value - '0' - parent_count > 0 &&
+            adding ==
             0) {
             adding = 1; //new blockquote
             added = 1;
@@ -290,6 +290,7 @@ void parse_blockquotes(struct narrayInfo *nodes) {
             sprintf(blocknode->value, "%d", min_value);
             parse_blocklines_paragraphs(&blocknode->children, min_value);
             addToNodeArray(info, blocknode);
+            i--;
             // addToNodeArray(info, candidates->data[i]);
         } else {
             addToNodeArray(info, candidates->data[i]);
