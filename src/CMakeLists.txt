@@ -21,6 +21,8 @@ add_library(coolmd STATIC
         coolmd.c
         preprocessor.h
         preprocessor.c
+        dstring.h
+        dstring.c
 )
 
 # Make headers available to other targets

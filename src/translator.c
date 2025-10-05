@@ -75,24 +75,20 @@ char *html_val(struct Node *node, char *text) {
     }
 }
 
-
-char *to_html(struct Node *node) {
+struct dstring *to_html(struct Node *node) {
     // TODO: USE ITERATION INSTEAD OF RECURSION
     if (node->children == NULL) {
         return html_val(node, "");
     }
     // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
-    char *result = calloc(1, 1000);
+    struct dstring *result = create_dstring("");
     // char *temp = malloc(1000);
     for (int i = 0; i < node->children->elements; i++) {
-        char *val = to_html(node->children->data[i]);
-        result = strcat(result, val);
-        free(val);
+        struct dstring *val = to_html(node->children->data[i]);
+        concat_dstrings(result, val);
     }
-    char *val = html_val(node, result);
-    strcpy(result, val);
-    free(val);
-    return result;
+    struct dstring *val = html_val(node, result);
+    return val;
 }
 
 
