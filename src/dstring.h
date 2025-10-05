@@ -4,6 +4,7 @@
 
 #ifndef DSTRING_H
 #define DSTRING_H
+#include <stddef.h>
 
 extern "C" {
 #endif
@@ -12,6 +13,14 @@ struct dstring {
     int len;
     int cap;
 };
+
+struct dstringArrayInfo {
+    struct dstring **data;
+    int elements;
+    int capacity;
+};
+
+struct dstringArrayInfo *create_dstring_array(size_t size);
 
 struct dstring *create_dstring(const char *data);
 

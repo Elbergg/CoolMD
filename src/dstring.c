@@ -14,6 +14,23 @@ struct dstring *create_dstring(const char *data) {
     return d;
 }
 
+struct dstringArrayInfo *create_dstring_array(size_t size) {
+    struct dstringArrayInfo *info = calloc(1, sizeof(struct dstringArrayInfo));
+    info->capacity = size;
+    info->elements = 0;
+    info->data = calloc(size, sizeof(struct dstring *));
+    return info;
+}
+
+void add_to_dstring_array(struct dstringArrayInfo *info, struct dstring *dstring) {
+    if (info->elements == info->capacity) {
+        info->capacity *= 2;
+        realloc(info->data, info->capacity);
+    }
+    info->elements++;
+    info->data[info->elements] = dstring;
+}
+
 void append_to_dstring(struct dstring *d, const char *data) {
     check_if_cap(d, data);
     strcat(d->data, data);
@@ -21,9 +38,10 @@ void append_to_dstring(struct dstring *d, const char *data) {
 
 void check_if_cap(struct dstring *d, const char *data) {
     if (d->len += strlen(data) > d->cap) {
-        d->cap = d->cap * 2;
+        d->cap *= 2;
         realloc(d->data, d->cap);
     }
+    d->len += strlen(data);
 }
 
 void free_dstring(struct dstring *d) {

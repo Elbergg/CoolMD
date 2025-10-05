@@ -9,13 +9,77 @@
 #include <string.h>
 
 
-char *html_val(struct Node *node, char *text) {
-    char *og = calloc(1, strlen(text) + 100);
+// char *html_val(struct Node *node, char *text) {
+//     char *og = calloc(1, strlen(text) + 100);
+//     switch (node->type) {
+//         case TEXTNODE:
+//             strcpy(og, node->value);
+//             strcat(text, "");
+//             strcat(og, text);
+//             return og;
+//         case PARAGRAPH:
+//             strcpy(og, "<p>");
+//             strcat(text, "</p>");
+//             strcat(og, text);
+//             return og;
+//         case HEADER1:
+//             strcpy(og, "<h1>");
+//             strcat(text, "</h1>");
+//             strcat(og, text);
+//             return og;
+//         case HEADER2:
+//             strcpy(og, "<h2>");
+//             strcat(text, "</h2>");
+//             strcat(og, text);
+//             return og;
+//         case HEADER3:
+//             strcpy(og, "<h3>");
+//             strcat(text, "</h3>");
+//             strcat(og, text);
+//             return og;
+//         case HEADER4:
+//             strcpy(og, "<h4>");
+//             strcat(text, "</h4>");
+//             strcat(og, text);
+//             return og;
+//         case HEADER5:
+//             strcpy(og, "<h5>");
+//             strcat(text, "</h5>");
+//             strcat(og, text);
+//             return og;
+//         case HEADER6:
+//             strcpy(og, "<h6>");
+//             strcat(text, "</h6>");
+//             strcat(og, text);
+//             return og;
+//         case EMPHASIS:
+//             strcpy(og, "<em>");
+//             strcat(text, "</em>");
+//             strcat(og, text);
+//             return og;
+//         case BOLD:
+//             strcpy(og, "<strong>");
+//             strcat(text, "</strong>");
+//             strcat(og, text);
+//             return og;
+//         case BLOCKQUOTE:
+//             strcpy(og, "<blockquote>");
+//             strcat(text, "</blockquote>");
+//             strcat(og, text);
+//             return og;
+//         default:
+//             strcpy(og, "");
+//             strcat(text, "");
+//             strcat(og, text);
+//             return og;
+//     }
+// }
+
+
+struct dstring *html_val(struct Node *node, struct dstring *text) {
     switch (node->type) {
         case TEXTNODE:
-            strcpy(og, node->value);
-            strcat(text, "");
-            strcat(og, text);
+
             return og;
         case PARAGRAPH:
             strcpy(og, "<p>");
@@ -76,19 +140,38 @@ char *html_val(struct Node *node, char *text) {
 }
 
 struct dstring *to_html(struct Node *node) {
-    // TODO: USE ITERATION INSTEAD OF RECURSION
-    if (node->children == NULL) {
-        return html_val(node, "");
-    }
-    // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
+    struct narrayInfo *queue = createNodeArray(10);
+    struct dstringArrayInfo *info = create_dstring_array(10);
+    int i = 0;
+    int q = 0;
+    struct narrayInfo *candidates = node->children;
     struct dstring *result = create_dstring("");
-    // char *temp = malloc(1000);
-    for (int i = 0; i < node->children->elements; i++) {
-        struct dstring *val = to_html(node->children->data[i]);
-        concat_dstrings(result, val);
+    while (i < candidates->elements || queue->elements - q != 0) {
+        if (candidates->data[i]->children == NULL) {
+            struct dstring *empty = create_dstring("");
+            concat_dstrings(result, html_val(candidates->data[i], empty));
+        } else {
+            if (i != candidates->elements - 1) {
+                addToNodeArray(queue, candidates->data[i + 1]);
+            }
+            candidates = candidates->data[i]->children;
+            i = 0;
+        }
     }
-    struct dstring *val = html_val(node, result);
-    return val;
+
+
+    // if (node->children == NULL) {
+    //     return html_val(node, "");
+    // }
+    // // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
+    // struct dstring *result = create_dstring("");
+    // // char *temp = malloc(1000);
+    // for (int i = 0; i < node->children->elements; i++) {
+    //     struct dstring *val = to_html(node->children->data[i]);
+    //     concat_dstrings(result, val);
+    // }
+    // struct dstring *val = html_val(node, result);
+    // return val;
 }
 
 
