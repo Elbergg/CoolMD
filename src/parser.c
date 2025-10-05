@@ -102,9 +102,11 @@ void parse_h1(struct narrayInfo *nodes) {
                 if (candidates->data[i]->type == DNL) {
                     struct Node *snlnode = calloc(1, sizeof(struct Node));
                     snlnode->type = SNL;
-                    snlnode->value = strdup(candidates->data[i]->value);
+                    snlnode->value = strdup("\n");
                     addToNodeArray(headnode->children, snlnode);
                     candidates->data[i]->type = SNL;
+                    free(candidates->data[i]->value);
+                    candidates->data[i]->value = strdup("\n");
                     delete_last_n_nodes(info, 1);
                     addToNodeArray(info, headnode);
                     addToNodeArray(info, candidates->data[i]);
