@@ -108,7 +108,7 @@ void parse_h1(struct narrayInfo *nodes) {
                     delete_last_n_nodes(info, 1);
                     addToNodeArray(info, headnode);
                     addToNodeArray(info, candidates->data[i]);
-                    break;
+                    continue;
                 }
                 addToNodeArray(headnode->children, candidates->data[i]);
             }
