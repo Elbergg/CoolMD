@@ -8,6 +8,7 @@
 
 extern "C" {
 #endif
+//TODO ADD TYPEDEFFS TO ALL THE STRUCTS!
 struct dstring {
     char *data;
     int len;
