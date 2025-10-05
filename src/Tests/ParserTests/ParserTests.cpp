@@ -301,6 +301,20 @@ TEST(ParserTest, HeaderSimpleTest) {
     free_narray(narray);
 }
 
+TEST(ParserTest, HeaderSNLTest) {
+    char text[] = "# Hello\n #Hej";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    Node **nodes = narray->data[0]->children->data;
+    ASSERT_EQ(nodes[0]->type, HEADER1);
+    ASSERT_EQ(nodes[0]->children->data[0]->type, HASHSPACENODE);
+    ASSERT_EQ(nodes[0]->children->data[1]->type, SENTENCE);
+    ASSERT_EQ(nodes[0]->children->data[2]->type, SNL);
+    free_tarray(info);
+    free_narray(narray);
+}
+
 TEST(ParserTest, Header2SimpleTest) {
     char text[] = "## Hello";
     struct tarrayInfo *info = tokenize(text);
