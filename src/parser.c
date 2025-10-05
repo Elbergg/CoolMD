@@ -503,6 +503,7 @@ void parse_left_outs(struct narrayInfo *nodes) {
             addToNodeArray(parnode->children, candidates->data[i]);
             i++;
             while (i < candidates->elements && !is_final_node(candidates->data[i]->type)) {
+                candidates->data[i]->type = TEXTNODE;
                 addToNodeArray(parnode->children, candidates->data[i]);
                 i++;
             }
