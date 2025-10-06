@@ -141,7 +141,8 @@ struct dstring *html_val(struct Node *node, struct dstring *text) {
 
 struct dstring *to_html(struct Node *node) {
     struct narrayInfo *queue = createNodeArray(10);
-    struct dstringArrayInfo *info = create_dstring_array(10);
+    struct dstringArrayInfo *prefix_queue = create_dstring_array(10);
+    struct dstringArrayInfo *suffix_queue = create_dstring_array(10);
     int i = 0;
     int q = 0;
     struct narrayInfo *candidates = node->children;
