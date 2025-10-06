@@ -6,9 +6,11 @@
 #define DSTRING_H
 #include <stddef.h>
 
+#ifdef __cplusplus
 extern "C" {
 #endif
-//TODO ADD TYPEDEFFS TO ALL THE STRUCTS!
+
+// TODO ADD TYPEDEFS TO ALL THE STRUCTS!
 struct dstring {
     char *data;
     int len;
@@ -23,6 +25,8 @@ struct dstringArrayInfo {
 
 struct dstringArrayInfo *create_dstring_array(size_t size);
 
+void add_to_dstring_array(struct dstringArrayInfo *array, struct dstring *dstring);
+
 struct dstring *create_dstring(const char *data);
 
 void append_to_dstring(struct dstring *d, const char *data);
@@ -31,11 +35,12 @@ void add_to_dstring_front(struct dstring *d, const char *data);
 
 void check_if_cap(struct dstring *d, const char *data);
 
-
 void free_dstring(struct dstring *d);
 
 void concat_dstrings(struct dstring *d, struct dstring *s);
-}
-#ifdef __cplusplus
 
-#endif //DSTRING_H
+#ifdef __cplusplus
+}
+#endif
+
+#endif // DSTRING_H

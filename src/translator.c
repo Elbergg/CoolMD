@@ -76,85 +76,90 @@
 // }
 
 
-struct dstring *html_val(struct Node *node, struct dstring *text) {
+void html_val(struct Node *node, struct dstringArrayInfo *prefixes, struct dstringArrayInfo *suffixes) {
+    struct dstring *prefix;
+    struct dstring *suffix;
     switch (node->type) {
         case TEXTNODE:
-
-            return og;
+            prefix = create_dstring("");
+            suffix = create_dstring("");
+            break;
         case PARAGRAPH:
-            strcpy(og, "<p>");
-            strcat(text, "</p>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<p>");
+            suffix = create_dstring("</p>");
+            break;
         case HEADER1:
-            strcpy(og, "<h1>");
-            strcat(text, "</h1>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h1>");
+            suffix = create_dstring("</h1>");
+            break;
         case HEADER2:
-            strcpy(og, "<h2>");
-            strcat(text, "</h2>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h2>");
+            suffix = create_dstring("</h2>");
+            break;
         case HEADER3:
-            strcpy(og, "<h3>");
-            strcat(text, "</h3>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h3>");
+            suffix = create_dstring("</h3>");
+            break;
         case HEADER4:
-            strcpy(og, "<h4>");
-            strcat(text, "</h4>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h4>");
+            suffix = create_dstring("</h4>");
+            break;
         case HEADER5:
-            strcpy(og, "<h5>");
-            strcat(text, "</h5>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h5>");
+            suffix = create_dstring("</h5>");
+            break;
         case HEADER6:
-            strcpy(og, "<h6>");
-            strcat(text, "</h6>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h6>");
+            suffix = create_dstring("</h6>");
+            break;
         case EMPHASIS:
-            strcpy(og, "<em>");
-            strcat(text, "</em>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<em>");
+            suffix = create_dstring("</em>");
+            break;
         case BOLD:
-            strcpy(og, "<strong>");
-            strcat(text, "</strong>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<strong>");
+            suffix = create_dstring("</strong>");
+            break;
         case BLOCKQUOTE:
-            strcpy(og, "<blockquote>");
-            strcat(text, "</blockquote>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<blockquote>");
+            suffix = create_dstring("</blockquote>");
+            break;
         default:
-            strcpy(og, "");
-            strcat(text, "");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("");
+            suffix = create_dstring("");
+            break;
     }
+    add_to_dstring_array(prefixes, prefix);
+    add_to_dstring_array(suffixes, suffix);
 }
 
 struct dstring *to_html(struct Node *node) {
     struct narrayInfo *queue = createNodeArray(10);
     struct dstringArrayInfo *prefix_queue = create_dstring_array(10);
     struct dstringArrayInfo *suffix_queue = create_dstring_array(10);
+    // struct dstringArrayInfo *text_queue = create_dstring_array(10);
     int i = 0;
     int q = 0;
+    int ps = 0;
     struct narrayInfo *candidates = node->children;
     struct dstring *result = create_dstring("");
     while (i < candidates->elements || queue->elements - q != 0) {
         if (candidates->data[i]->children == NULL) {
-            struct dstring *empty = create_dstring("");
-            concat_dstrings(result, html_val(candidates->data[i], empty));
+            html_val(candidates->data[i], prefix_queue, suffix_queue);
+            ps++;
+            concat_dstrings(prefix_queue->data[ps], result);
+            result = prefix_queue->data[ps];
+            concat_dstrings(result, suffix_queue->data[ps]);
+            ps--;
+
+
         } else {
             if (i != candidates->elements - 1) {
                 addToNodeArray(queue, candidates->data[i + 1]);
+                q++;
             }
+            html_val(candidates->data[i], prefix_queue, suffix_queue);
+            ps++;
             candidates = candidates->data[i]->children;
             i = 0;
         }
@@ -174,7 +179,6 @@ struct dstring *to_html(struct Node *node) {
     // struct dstring *val = html_val(node, result);
     // return val;
 }
-
 
 char *raw_val(struct Node *node, char *text) {
     char *og = calloc(1, strlen(text) + 100);

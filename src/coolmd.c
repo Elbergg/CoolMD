@@ -6,7 +6,7 @@
 char *compile(const char *text) {
     struct tarrayInfo *tarray = tokenize(text);
     struct narrayInfo *narray = parse(tarray->data, 0, tarray->elements);
-    char *result = to_html(narray->data[0]);
+    char *result = to_html(narray->data[0])->data;
     free_tarray(tarray);
     free_narray(narray);
     return result;
@@ -19,5 +19,4 @@ struct narrayInfo *compile_to_nodes(const char *text) {
     return narray;
 }
 
-char *nodes_to_raw(struct narrayInfo *narray) {
-}
+char *nodes_to_raw(struct narrayInfo *narray) {}

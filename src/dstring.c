@@ -8,7 +8,8 @@
 
 struct dstring *create_dstring(const char *data) {
     struct dstring *d = calloc(1, sizeof(struct dstring));
-    d->data = data;
+    d->data = malloc(strlen(data));
+    strcpy(d->data, data);
     d->len = strlen(data);
     d->cap = d->len * 2;
     return d;
