@@ -28,8 +28,8 @@ void add_to_dstring_array(struct dstringArrayInfo *info, struct dstring *dstring
         info->capacity *= 2;
         realloc(info->data, info->capacity);
     }
-    info->elements++;
     info->data[info->elements] = dstring;
+    info->elements++;
 }
 
 void append_to_dstring(struct dstring *d, const char *data) {
@@ -40,7 +40,7 @@ void append_to_dstring(struct dstring *d, const char *data) {
 void check_if_cap(struct dstring *d, const char *data) {
     if (d->len += strlen(data) > d->cap) {
         d->cap = d->len + strlen(data);
-        realloc(d->data, d->cap);
+        d->data = realloc(d->data, d->cap);
     }
     d->len += strlen(data);
 }
