@@ -139,8 +139,8 @@ struct dstring *to_html(struct Node *node) {
     struct dstringArrayInfo *suffix_queue = create_dstring_array(10);
     // struct dstringArrayInfo *text_queue = create_dstring_array(10);
     int i = 0;
-    int q = 0;
-    int ps = 0;
+    int q = -1;
+    int ps = -1;
     struct narrayInfo *candidates = node->children;
     struct dstring *result = create_dstring("");
     while (i < candidates->elements || queue->elements - q != 0) {
@@ -151,7 +151,7 @@ struct dstring *to_html(struct Node *node) {
             result = prefix_queue->data[ps];
             concat_dstrings(result, suffix_queue->data[ps]);
             ps--;
-
+            i++;
 
         } else {
             if (i != candidates->elements - 1) {
@@ -162,6 +162,11 @@ struct dstring *to_html(struct Node *node) {
             ps++;
             candidates = candidates->data[i]->children;
             i = 0;
+        }
+        if (i == candidates->elements) {
+            candidates = queue->data[q]->children;
+            i = 0;
+            q--;
         }
     }
 

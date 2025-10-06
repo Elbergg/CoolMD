@@ -8,7 +8,7 @@
 
 struct dstring *create_dstring(const char *data) {
     struct dstring *d = calloc(1, sizeof(struct dstring));
-    d->data = malloc(strlen(data));
+    d->data = malloc(strlen(data) + 1);
     strcpy(d->data, data);
     d->len = strlen(data);
     d->cap = d->len * 2;
@@ -39,7 +39,7 @@ void append_to_dstring(struct dstring *d, const char *data) {
 
 void check_if_cap(struct dstring *d, const char *data) {
     if (d->len += strlen(data) > d->cap) {
-        d->cap *= 2;
+        d->cap = d->len + strlen(data);
         realloc(d->data, d->cap);
     }
     d->len += strlen(data);
