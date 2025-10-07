@@ -195,10 +195,13 @@ struct dstring *to_html(struct Node *node) {
                 prefix_queue->elements--;
                 suffix_queue->elements--;
             }
-            concat_dstrings(result_queue->data[rs], result);
-            result = result_queue->data[rs];
-            rs--;
-            result_queue->elements--;
+            while (rs > -1) {
+                concat_dstrings(result_queue->data[rs], result);
+                result = result_queue->data[rs];
+                rs--;
+                result_queue->elements--;
+            }
+
             if (q >= 0) {
                 html_val(queue->data[q], prefix_queue, suffix_queue);
                 ps++;
