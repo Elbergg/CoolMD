@@ -187,6 +187,15 @@ struct dstring *to_html(struct Node *node) {
                 prefix_queue->elements--;
                 suffix_queue->elements--;
             }
+            if (q >= 0) {
+                html_val(queue->data[q], prefix_queue, suffix_queue);
+                ps++;
+                candidates = queue->data[q]->children;
+                q--;
+                queue->elements--;
+                i = 0;
+                continue;
+            }
             while (ps > -1) {
                 concat_dstrings(prefix_queue->data[ps], result);
                 result = prefix_queue->data[ps];
@@ -195,21 +204,14 @@ struct dstring *to_html(struct Node *node) {
                 prefix_queue->elements--;
                 suffix_queue->elements--;
             }
+            //  TODO ADD ONE QUEUE FOR ALL THE ADDED STRINGS
             while (rs > -1) {
                 concat_dstrings(result_queue->data[rs], result);
                 result = result_queue->data[rs];
                 rs--;
                 result_queue->elements--;
             }
-
-            if (q >= 0) {
-                html_val(queue->data[q], prefix_queue, suffix_queue);
-                ps++;
-                candidates = queue->data[q]->children;
-                q--;
-                queue->elements--;
-                i = 0;
-            } else {
+            if (q == -1) {
                 return result;
             }
         }
