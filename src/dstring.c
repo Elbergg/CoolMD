@@ -23,6 +23,11 @@ struct dstringArrayInfo *create_dstring_array(size_t size) {
     return info;
 }
 
+struct dstring *get_back_da(struct dstringArrayInfo *info) {
+    return info->data[info->elements - 1];
+}
+
+
 void add_to_dstring_array(struct dstringArrayInfo *info, struct dstring *dstring) {
     if (info->elements == info->capacity) {
         info->capacity *= 2;

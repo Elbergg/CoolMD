@@ -133,85 +133,68 @@ void html_val(struct Node *node, struct dstringArrayInfo *prefixes, struct dstri
     add_to_dstring_array(suffixes, suffix);
 }
 
+
 struct dstring *to_html(struct Node *node) {
     struct narrayInfo *queue = createNodeArray(10);
-    struct dstringArrayInfo *prefix_queue = create_dstring_array(10);
-    struct dstringArrayInfo *suffix_queue = create_dstring_array(10);
     struct dstringArrayInfo *result_queue = create_dstring_array(10);
     int i = 0;
-    int q = -1;
-    int ps = -1;
-    int rs = -1;
     struct narrayInfo *candidates = node->children;
     struct dstring *result = create_dstring("");
-    while (i < candidates->elements - 1 || queue->elements - q != 0) {
+    while (i < candidates->elements) {
         if (candidates->data[i]->children == NULL) {
-            html_val(candidates->data[i], prefix_queue, suffix_queue);
-            ps++;
-            concat_dstrings(prefix_queue->data[ps], result);
-            result = prefix_queue->data[ps];
-            concat_dstrings(result, suffix_queue->data[ps]);
-            ps--;
-            prefix_queue->elements--;
-            suffix_queue->elements--;
+            html_val(candidates->data[i], result_queue, result_queue);
+            concat_dstrings(get_back_da(result_queue), result);
+            result = get_back_da(result_queue);
+            result_queue->elements--;
+            concat_dstrings(result, get_back_da(result_queue));
+            result_queue->elements--;
+            add_to_dstring_array(result_queue, result);
             i++;
         } else {
             if (i < candidates->elements - 1) {
                 int j = candidates->elements - 1;
                 while (j != i) {
                     addToNodeArray(queue, candidates->data[j]);
-                    q++;
                     j--;
                 }
             }
-            html_val(candidates->data[i], prefix_queue, suffix_queue);
-            ps++;
+            html_val(candidates->data[i], result_queue, result_queue);
+            struct dstring *mock_result = create_dstring("");
             add_to_dstring_array(result_queue, result);
-            rs++;
+            add_to_dstring_array(result_queue, mock_result);
             result = create_dstring("");
             candidates = candidates->data[i]->children;
             i = 0;
             continue;
         }
         if (i == candidates->elements) {
-            while (q != -1 && queue->data[q]->children == NULL) {
-                html_val(queue->data[q], prefix_queue, suffix_queue);
-                ps++;
-                q--;
+            while (queue->elements != 0 && get_back_na(queue)->children == NULL) {
+                html_val(get_back_na(queue), result_queue, result_queue);
                 queue->elements -= 1;
-                concat_dstrings(prefix_queue->data[ps], result);
-                result = prefix_queue->data[ps];
-                concat_dstrings(result, suffix_queue->data[ps]);
-                ps--;
+                concat_dstrings(get_back_da(result_queue), result);
+                result = get_back_da(result_queue);
+                result_queue->elements--;
+                concat_dstrings(result, get_back_da(result_queue));
                 i++;
-                prefix_queue->elements--;
-                suffix_queue->elements--;
+                result_queue->elements--;
             }
-            if (q >= 0) {
-                html_val(queue->data[q], prefix_queue, suffix_queue);
-                ps++;
-                candidates = queue->data[q]->children;
-                q--;
+            if (queue->elements > 0) {
+                html_val(get_back_na(queue), result_queue, result_queue);
+                candidates = get_back_na(queue)->children;
                 queue->elements--;
                 i = 0;
                 continue;
             }
-            while (ps > -1) {
-                concat_dstrings(prefix_queue->data[ps], result);
-                result = prefix_queue->data[ps];
-                concat_dstrings(result, suffix_queue->data[ps]);
-                ps--;
-                prefix_queue->elements--;
-                suffix_queue->elements--;
-            }
-            //  TODO ADD ONE QUEUE FOR ALL THE ADDED STRINGS
-            while (rs > -1) {
-                concat_dstrings(result_queue->data[rs], result);
-                result = result_queue->data[rs];
-                rs--;
+            while (result_queue->elements > 0) {
+                concat_dstrings(get_back_da(result_queue), result);
+                result = get_back_da(result_queue);
+                result_queue->elements--;
+                concat_dstrings(result, get_back_da(result_queue));
                 result_queue->elements--;
             }
-            if (q == -1) {
+
+            //  TODO ADD ONE QUEUE FOR ALL THE ADDED STRINGS
+            if (queue->elements == 0) {
                 return result;
             }
         }

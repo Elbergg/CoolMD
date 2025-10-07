@@ -660,6 +660,10 @@ void addToNodeArray(struct narrayInfo *info, struct Node *node) {
 }
 
 
+struct Node *get_back_na(struct narrayInfo *narray) {
+    return narray->data[narray->elements - 1];
+}
+
 int parse_two_understars(struct Token *tokens, int index, int length, struct narrayInfo *nodes, enum tokenType type,
                          char value) {
     int last = 0;

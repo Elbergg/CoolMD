@@ -27,6 +27,8 @@ struct dstringArrayInfo *create_dstring_array(size_t size);
 
 void add_to_dstring_array(struct dstringArrayInfo *array, struct dstring *dstring);
 
+struct dstring *get_back_da(struct dstringArrayInfo *array);
+
 struct dstring *create_dstring(const char *data);
 
 void append_to_dstring(struct dstring *d, const char *data);
