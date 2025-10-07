@@ -31,7 +31,7 @@ struct dstring *get_back_da(struct dstringArrayInfo *info) {
 void add_to_dstring_array(struct dstringArrayInfo *info, struct dstring *dstring) {
     if (info->elements == info->capacity) {
         info->capacity *= 2;
-        realloc(info->data, info->capacity);
+        info->data = realloc(info->data, info->capacity * sizeof(struct dstring *));
     }
     info->data[info->elements] = dstring;
     info->elements++;

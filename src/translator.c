@@ -140,51 +140,24 @@ struct dstring *to_html(struct Node *node) {
     int i = 0;
     struct narrayInfo *candidates = node->children;
     struct dstring *result = create_dstring("");
-    while (i < candidates->elements) {
+    struct narrayInfo *parent_stack = createNodeArray(10);
+    addToNodeArray(parent_stack, node);
+    while (parent_stack->elements != 0) {
+        if (i == candidates->elements) {
+            candidates = get_back_na(parent_stack);
+            parent_stack->elements--;
+            continue;
+        }
         if (candidates->data[i]->children == NULL) {
             html_val(candidates->data[i], result_queue, result_queue);
-            concat_dstrings(get_back_da(result_queue), result);
-            result = get_back_da(result_queue);
-            result_queue->elements--;
-            concat_dstrings(result, get_back_da(result_queue));
-            result_queue->elements--;
-            add_to_dstring_array(result_queue, result);
             i++;
         } else {
-            if (i < candidates->elements - 1) {
-                int j = candidates->elements - 1;
-                while (j != i) {
-                    addToNodeArray(queue, candidates->data[j]);
-                    j--;
-                }
-            }
-            html_val(candidates->data[i], result_queue, result_queue);
-            struct dstring *mock_result = create_dstring("");
-            add_to_dstring_array(result_queue, result);
-            add_to_dstring_array(result_queue, mock_result);
-            result = create_dstring("");
+            addToNodeArray(parent_stack, candidates->data[i]);
             candidates = candidates->data[i]->children;
             i = 0;
             continue;
         }
         if (i == candidates->elements) {
-            while (queue->elements != 0 && get_back_na(queue)->children == NULL) {
-                html_val(get_back_na(queue), result_queue, result_queue);
-                queue->elements -= 1;
-                concat_dstrings(get_back_da(result_queue), result);
-                result = get_back_da(result_queue);
-                result_queue->elements--;
-                concat_dstrings(result, get_back_da(result_queue));
-                i++;
-                result_queue->elements--;
-            }
-            if (queue->elements > 0) {
-                html_val(get_back_na(queue), result_queue, result_queue);
-                candidates = get_back_na(queue)->children;
-                queue->elements--;
-                i = 0;
-                continue;
-            }
             while (result_queue->elements > 0) {
                 concat_dstrings(get_back_da(result_queue), result);
                 result = get_back_da(result_queue);
@@ -192,6 +165,24 @@ struct dstring *to_html(struct Node *node) {
                 concat_dstrings(result, get_back_da(result_queue));
                 result_queue->elements--;
             }
+            html_val(get_back_na(parent_stack), result_queue, result_queue);
+            concat_dstrings(get_back_da(result_queue), result);
+            result = get_back_da(result_queue);
+            result_queue->elements--;
+            concat_dstrings(result, get_back_da(result_queue));
+            result_queue->elements--;
+            add_to_dstring_array(result_queue, result);
+            candidates = get_back_na(parent_stack)->children;
+            parent_stack->elements--;
+            continue;
+            if (queue->elements > 0) {
+                html_val(get_back_na(queue), result_queue, result_queue);
+                candidates = get_back_na(queue)->children;
+                queue->elements--;
+                i = 0;
+                continue;
+            }
+
 
             //  TODO ADD ONE QUEUE FOR ALL THE ADDED STRINGS
             if (queue->elements == 0) {
