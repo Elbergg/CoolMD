@@ -2,6 +2,7 @@
 // Created by tomek on 7/8/25.
 //
 #include "dstring.h"
+#include "int_array.h"
 #include "parser.h"
 
 #define TRANSLATOR_H

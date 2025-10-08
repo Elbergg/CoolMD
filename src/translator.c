@@ -138,22 +138,32 @@ struct dstring *to_html(struct Node *node) {
     struct narrayInfo *queue = createNodeArray(10);
     struct dstringArrayInfo *result_queue = create_dstring_array(10);
     int i = 0;
-    struct narrayInfo *candidates = node->children;
+    struct narrayInfo *candidates = createNodeArray(1);
+    addToNodeArray(candidates, node);
     struct dstring *result = create_dstring("");
     struct narrayInfo *parent_stack = createNodeArray(10);
-    addToNodeArray(parent_stack, node);
-    while (parent_stack->elements != 0) {
-        if (i == candidates->elements) {
-            candidates = get_back_na(parent_stack);
+    intarray *index_stack = create_intarray(10);
+    do {
+        addToNodeArray(parent_stack, candidates->data[i]);
+        candidates = candidates->data[i]->children;
+        add_to_intarray(index_stack, i + 1);
+        if (i >= candidates->elements) {
+            candidates = get_back_na(parent_stack)->children;
             parent_stack->elements--;
+            i = get_back_ia(index_stack);
+            index_stack->elements--;
             continue;
         }
         if (candidates->data[i]->children == NULL) {
             html_val(candidates->data[i], result_queue, result_queue);
-            i++;
+            i = get_back_ia(index_stack);
+            index_stack->elements--;
+            candidates = get_back_na(parent_stack)->children;
+            parent_stack->elements--;
         } else {
             addToNodeArray(parent_stack, candidates->data[i]);
             candidates = candidates->data[i]->children;
+            add_to_intarray(index_stack, i + 1);
             i = 0;
             continue;
         }
@@ -172,6 +182,8 @@ struct dstring *to_html(struct Node *node) {
             concat_dstrings(result, get_back_da(result_queue));
             result_queue->elements--;
             add_to_dstring_array(result_queue, result);
+            i = get_back_ia(index_stack);
+            index_stack->elements--;
             candidates = get_back_na(parent_stack)->children;
             parent_stack->elements--;
             continue;
@@ -189,7 +201,8 @@ struct dstring *to_html(struct Node *node) {
                 return result;
             }
         }
-    }
+
+    } while (parent_stack->elements != 0);
 
     // if (candidates->data[i]->children == NULL) {
     //     html_val(candidates->data[i], prefix_queue, suffix_queue);
