@@ -181,12 +181,15 @@ void parse_hs(struct narrayInfo *nodes) {
             delete_last_n_nodes(info, count);
             addToNodeArray(info, headnode);
             count = 0;
+        } else if (count != 0 && candidates->data[i]->type != HEADER1) {
+            free(headnode->children->data);
+            free(headnode->children);
+            free(headnode);
+            count = 0;
+            addToNodeArray(info, candidates->data[i]);
         } else {
             addToNodeArray(info, candidates->data[i]);
         }
-    }
-    if (headnode != NULL && !added) {
-        free(headnode);
     }
     free(nodes->data[0]->children->data);
     free(nodes->data[0]->children);
@@ -442,7 +445,9 @@ void parse_paragraphs(struct narrayInfo *nodes) {
                 addToNodeArray(info, parnode);
             } else {
                 addToNodeArray(info, candidates->data[i]);
+                free(parnode->children->data);
                 free(parnode->children);
+                free(parnode);
             }
         } else {
             addToNodeArray(info, candidates->data[i]);
