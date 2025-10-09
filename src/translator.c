@@ -14,9 +14,8 @@ struct dstring *html_val(struct Node *node, struct dstring *result) {
     struct dstring *suffix;
     switch (node->type) {
         case TEXTNODE:
-            prefix = create_dstring("");
-            suffix = create_dstring(node->value);
-            break;
+            append_to_dstring(result, node->value);
+            return result;
         case PARAGRAPH:
             prefix = create_dstring("<p>");
             suffix = create_dstring("</p>");
@@ -70,7 +69,6 @@ struct dstring *html_val(struct Node *node, struct dstring *result) {
 
 
 struct dstring *to_html(struct Node *node) {
-    struct narrayInfo *queue = createNodeArray(10);
     struct dstringArrayInfo *result_stack = create_dstring_array(10);
     int i = 0;
     struct narrayInfo *candidates;
@@ -78,12 +76,10 @@ struct dstring *to_html(struct Node *node) {
     struct narrayInfo *parent_stack = createNodeArray(10);
     intarray *index_stack = create_intarray(10);
     struct Node *parent = node;
-    struct dstring *temp_result;
     add_to_dstring_array(result_stack, result);
-    result = create_dstring("");
     while (node != NULL) {
         candidates = parent->children;
-        if (i < candidates->elements) {
+        if (i < candidates->elements && candidates->data[i] != NULL) {
             if (candidates->data[i]->children == NULL) {
                 result = html_val(candidates->data[i], result);
                 i++;
@@ -111,7 +107,14 @@ struct dstring *to_html(struct Node *node) {
                     continue;
                 }
             }
-            return result;
+            free(parent_stack->data);
+            free(parent_stack);
+            free(index_stack->data);
+            free(index_stack);
+            struct dstring *final = create_dstring("");
+            append_to_dstring(final, result->data);
+            free_darray(result_stack);
+            return final;
         }
     }
 }
