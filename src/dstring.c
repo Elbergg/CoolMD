@@ -39,20 +39,17 @@ void add_to_dstring_array(struct dstringArrayInfo *info, struct dstring *dstring
 
 void append_to_dstring(struct dstring *d, const char *data) {
     check_if_cap(d, data);
-    strcat(d->data, data);
+    // strcat(d->data, data);
 }
 
 void check_if_cap(struct dstring *d, const char *data) {
-    if (d->len += strlen(data) > d->cap) {
-        d->cap = d->len + strlen(data);
+    size_t data_len = strlen(data);
+    if ((d->len + data_len + 1) > d->cap) {
+        d->cap = d->len + data_len + 1;
         d->data = realloc(d->data, d->cap);
     }
-    d->len += strlen(data);
-}
-
-void free_dstring(struct dstring *d) {
-    free(d->data);
-    free(d);
+    strcpy(d->data + d->len, data);
+    d->len += data_len;
 }
 
 void concat_dstrings(struct dstring *d, struct dstring *s) {
@@ -66,4 +63,22 @@ void add_to_dstring_front(struct dstring *d, const char *data) {
     strcat(data, d->data);
     free(d->data);
     d->data = data;
+}
+
+
+void free_dstring(struct dstring *string) {
+    if (string == NULL) return;
+    if (string->data != NULL) {
+        free(string->data);
+    }
+    free(string);
+}
+
+void free_darray(struct dstringArrayInfo *darray) {
+    if (darray == NULL) return;
+    for (int i = 0; i < darray->elements; i++) {
+        free_dstring(darray->data[i]);
+    }
+    free(darray->data);
+    free(darray);
 }

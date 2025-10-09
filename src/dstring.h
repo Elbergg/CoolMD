@@ -41,6 +41,9 @@ void free_dstring(struct dstring *d);
 
 void concat_dstrings(struct dstring *d, struct dstring *s);
 
+void free_dstring(struct dstring *string);
+
+void free_darray(struct dstringArrayInfo *narray);
 #ifdef __cplusplus
 }
 #endif

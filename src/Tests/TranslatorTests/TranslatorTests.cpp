@@ -5,6 +5,19 @@
 #include "../../translator.h"
 #include "gtest/gtest.h"
 
+TEST(TranslatorTest, HeaderTranslateTest) {
+    char text[] = "# Hello\n";
+    struct tarrayInfo *info = tokenize(text);
+    Token *tokens = info->data;
+    struct narrayInfo *narray = parse(tokens, 0, info->elements);
+    struct dstring *result = to_html(narray->data[0]);
+    ASSERT_TRUE(strcmp(result->data, "<h1>Hello</h1>") == 0);
+
+    free_tarray(info);
+    free_narray(narray);
+    free_dstring(result);
+}
+
 TEST(TranslatorTest, HeaderParagraphTranslateTest) {
     char text[] = "# Hello\ndzien dobry\n\n";
     struct tarrayInfo *info = tokenize(text);
@@ -15,7 +28,7 @@ TEST(TranslatorTest, HeaderParagraphTranslateTest) {
 
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
 
 TEST(TranslatorTest, HeaderParagraphEmphasisTranslateTest) {
@@ -112,9 +125,9 @@ TEST(TranslatorTest, NestedBlockquotesTest) {
     struct dstring *result = to_html(narray->data[0]);
 
     ASSERT_TRUE(strcmp(result->data,
-                       "<blockquote><p><em>He "
-                       "llo</em></p><blockquote><p>HIYO</p></blockquote><p>pozdrawiam</p></blockquote><p>melo "
-                       "melo</p><blockquote><p>dzien dobry</p></blockquote>") == 0);
+        "<blockquote><p><em>He "
+        "llo</em></p><blockquote><p>HIYO</p></blockquote><p>pozdrawiam</p></blockquote><p>melo "
+        "melo</p><blockquote><p>dzien dobry</p></blockquote>") == 0);
 
     free_tarray(info);
     free_narray(narray);
