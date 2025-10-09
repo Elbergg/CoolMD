@@ -26,9 +26,12 @@ void parse_terminals(struct Token *tokens, int index, int length, struct narrayI
                 break;
             case STAR:
                 i = parse_understar(tokens, i, length, nodes, STAR, '*');
+                break;
             case RIGHT:
                 i = parse_right(tokens, i, length, nodes);
-            default: ;
+                break;
+            default:
+                break;;
         }
     }
 }
