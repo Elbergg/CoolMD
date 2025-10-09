@@ -75,8 +75,7 @@
 //     }
 // }
 
-
-void html_val(struct Node *node, struct dstringArrayInfo *prefixes, struct dstringArrayInfo *suffixes) {
+struct dstring *html_val(struct Node *node, struct dstring *result) {
     struct dstring *prefix;
     struct dstring *suffix;
     switch (node->type) {
@@ -129,138 +128,58 @@ void html_val(struct Node *node, struct dstringArrayInfo *prefixes, struct dstri
             suffix = create_dstring("");
             break;
     }
-    add_to_dstring_array(prefixes, prefix);
-    add_to_dstring_array(suffixes, suffix);
+    concat_dstrings(prefix, result);
+    result = prefix;
+    concat_dstrings(result, suffix);
+    return result;
 }
 
 
 struct dstring *to_html(struct Node *node) {
     struct narrayInfo *queue = createNodeArray(10);
-    struct dstringArrayInfo *result_queue = create_dstring_array(10);
+    struct dstringArrayInfo *result_stack = create_dstring_array(10);
     int i = 0;
     struct narrayInfo *candidates;
     struct dstring *result = create_dstring("");
     struct narrayInfo *parent_stack = createNodeArray(10);
     intarray *index_stack = create_intarray(10);
     struct Node *parent = node;
+    struct dstring *temp_result;
+    add_to_dstring_array(result_stack, result);
+    result = create_dstring("");
     while (node != NULL) {
         candidates = parent->children;
-        if (i >= candidates->elements) {
-            parent - get_back_na(parent_stack);
-            parent_stack->elements--;
-            i = get_back_ia(index_stack);
-            index_stack->elements--;
-            continue;
-        }
-        if (candidates->data[i]->children == NULL) {
-            html_val(candidates->data[i], result_queue, result_queue);
-            i++;
-        } else {
-            addToNodeArray(parent_stack, parent);
-            parent = candidates->data[i];
-            add_to_intarray(index_stack, i + 1);
-            i = 0;
-            continue;
-        }
-        if (i == candidates->elements) {
-            while (result_queue->elements > 0) {
-                concat_dstrings(get_back_da(result_queue), result);
-                result = get_back_da(result_queue);
-                result_queue->elements--;
-                concat_dstrings(result, get_back_da(result_queue));
-                result_queue->elements--;
-            }
-            html_val(get_back_na(parent_stack), result_queue, result_queue);
-            concat_dstrings(get_back_da(result_queue), result);
-            result = get_back_da(result_queue);
-            result_queue->elements--;
-            concat_dstrings(result, get_back_da(result_queue));
-            result_queue->elements--;
-            add_to_dstring_array(result_queue, result);
-            result = create_dstring("");
-            add_to_dstring_array(result_queue, result);
-            result = create_dstring("");
-            i = get_back_ia(index_stack);
-            index_stack->elements--;
-            parent = get_back_na(parent_stack);
-            parent_stack->elements--;
-            continue;
-            if (queue->elements > 0) {
-                html_val(get_back_na(queue), result_queue, result_queue);
-                candidates = get_back_na(queue)->children;
-                queue->elements--;
+        if (i < candidates->elements) {
+            if (candidates->data[i]->children == NULL) {
+                result = html_val(candidates->data[i], result);
+                i++;
+            } else {
+                addToNodeArray(parent_stack, parent);
+                add_to_dstring_array(result_stack, result);
+                parent = candidates->data[i];
+                result = create_dstring("");
+                add_to_intarray(index_stack, i + 1);
                 i = 0;
                 continue;
             }
-
-
-            //  TODO ADD ONE QUEUE FOR ALL THE ADDED STRINGS
-            if (queue->elements == 0) {
-                return result;
+        }
+        if (i >= candidates->elements) {
+            if (parent_stack->elements > 0) {
+                result = html_val(parent, result);
+                concat_dstrings(get_back_da(result_stack), result);
+                result = get_back_da(result_stack);
+                result_stack->elements--;
+                if (parent_stack->elements > 0) {
+                    i = get_back_ia(index_stack);
+                    index_stack->elements--;
+                    parent = get_back_na(parent_stack);
+                    parent_stack->elements--;
+                    continue;
+                }
             }
+            return result;
         }
     }
-
-    // if (candidates->data[i]->children == NULL) {
-    //     html_val(candidates->data[i], prefix_queue, suffix_queue);
-    //     ps++;
-    //     concat_dstrings(prefix_queue->data[ps], result_queue->data[rs]);
-    //     result = prefix_queue->data[ps];
-    //     concat_dstrings(result, suffix_queue->data[ps]);
-    //     ps--;
-    //     prefix_queue->elements--;
-    //     suffix_queue->elements--;
-    //     i++;
-    // } else {
-    //     if (i != candidates->elements - 1) {
-    //         addToNodeArray(queue, candidates->data[i + 1]);
-    //         q++;
-    //     }
-    //     html_val(candidates->data[i], prefix_queue, suffix_queue);
-    //     ps++;
-    //     candidates = candidates->data[i]->children;
-    //     i = 0;
-    // }
-    // if (i == candidates->elements) {
-    //     while (queue->data[q]->children == NULL) {
-    //         html_val(queue->data[q], prefix_queue, suffix_queue);
-    //         ps++;
-    //         q--;
-    //         queue->elements -= 1;
-    //         concat_dstrings(prefix_queue->data[ps], result);
-    //         result = prefix_queue->data[ps];
-    //         concat_dstrings(result, suffix_queue->data[ps]);
-    //         ps--;
-    //         i++;
-    //         prefix_queue->elements--;
-    //         suffix_queue->elements--;
-    //     }
-    //     while (ps > -1) {
-    //         concat_dstrings(prefix_queue->data[ps], result);
-    //         result = prefix_queue->data[ps];
-    //         concat_dstrings(result, suffix_queue->data[ps]);
-    //         ps--;
-    //         prefix_queue->elements--;
-    //         suffix_queue->elements--;
-    //     }
-    //     html_val(queue->data[q], prefix_queue, suffix_queue);
-    //     candidates = queue->data[q]->children;
-    //     i = 0;
-    //     q--;
-    //     queue->elements--;
-    // }
-    // if (node->children == NULL) {
-    //     return html_val(node, "");
-    // }
-    // // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
-    // struct dstring *result = create_dstring("");
-    // // char *temp = malloc(1000);
-    // for (int i = 0; i < node->children->elements; i++) {
-    //     struct dstring *val = to_html(node->children->data[i]);
-    //     concat_dstrings(result, val);
-    // }
-    // struct dstring *val = html_val(node, result);
-    // return val;
 }
 
 char *raw_val(struct Node *node, char *text) {
