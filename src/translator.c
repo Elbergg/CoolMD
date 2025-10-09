@@ -9,92 +9,115 @@
 #include <string.h>
 
 
-char *html_val(struct Node *node, char *text) {
-    char *og = calloc(1, strlen(text) + 100);
+struct dstring *html_val(struct Node *node, struct dstring *result) {
+    struct dstring *prefix;
+    struct dstring *suffix;
     switch (node->type) {
         case TEXTNODE:
-            strcpy(og, node->value);
-            strcat(text, "");
-            strcat(og, text);
-            return og;
+            append_to_dstring(result, node->value);
+            return result;
         case PARAGRAPH:
-            strcpy(og, "<p>");
-            strcat(text, "</p>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<p>");
+            suffix = create_dstring("</p>");
+            break;
         case HEADER1:
-            strcpy(og, "<h1>");
-            strcat(text, "</h1>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h1>");
+            suffix = create_dstring("</h1>");
+            break;
         case HEADER2:
-            strcpy(og, "<h2>");
-            strcat(text, "</h2>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h2>");
+            suffix = create_dstring("</h2>");
+            break;
         case HEADER3:
-            strcpy(og, "<h3>");
-            strcat(text, "</h3>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h3>");
+            suffix = create_dstring("</h3>");
+            break;
         case HEADER4:
-            strcpy(og, "<h4>");
-            strcat(text, "</h4>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h4>");
+            suffix = create_dstring("</h4>");
+            break;
         case HEADER5:
-            strcpy(og, "<h5>");
-            strcat(text, "</h5>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h5>");
+            suffix = create_dstring("</h5>");
+            break;
         case HEADER6:
-            strcpy(og, "<h6>");
-            strcat(text, "</h6>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<h6>");
+            suffix = create_dstring("</h6>");
+            break;
         case EMPHASIS:
-            strcpy(og, "<em>");
-            strcat(text, "</em>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<em>");
+            suffix = create_dstring("</em>");
+            break;
         case BOLD:
-            strcpy(og, "<strong>");
-            strcat(text, "</strong>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<strong>");
+            suffix = create_dstring("</strong>");
+            break;
         case BLOCKQUOTE:
-            strcpy(og, "<blockquote>");
-            strcat(text, "</blockquote>");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("<blockquote>");
+            suffix = create_dstring("</blockquote>");
+            break;
         default:
-            strcpy(og, "");
-            strcat(text, "");
-            strcat(og, text);
-            return og;
+            prefix = create_dstring("");
+            suffix = create_dstring("");
+            break;
     }
-}
-
-
-char *to_html(struct Node *node) {
-    // TODO: USE ITERATION INSTEAD OF RECURSION
-    if (node->children == NULL) {
-        return html_val(node, "");
-    }
-    // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
-    char *result = calloc(1, 1000);
-    // char *temp = malloc(1000);
-    for (int i = 0; i < node->children->elements; i++) {
-        char *val = to_html(node->children->data[i]);
-        result = strcat(result, val);
-        free(val);
-    }
-    char *val = html_val(node, result);
-    strcpy(result, val);
-    free(val);
+    concat_dstrings(prefix, result);
+    result = prefix;
+    concat_dstrings(result, suffix);
     return result;
 }
 
+
+struct dstring *to_html(struct Node *node) {
+    struct dstringArrayInfo *result_stack = create_dstring_array(10);
+    int i = 0;
+    struct narrayInfo *candidates;
+    struct dstring *result = create_dstring("");
+    struct narrayInfo *parent_stack = createNodeArray(10);
+    intarray *index_stack = create_intarray(10);
+    struct Node *parent = node;
+    add_to_dstring_array(result_stack, result);
+    while (node != NULL) {
+        candidates = parent->children;
+        if (i < candidates->elements && candidates->data[i] != NULL) {
+            if (candidates->data[i]->children == NULL) {
+                result = html_val(candidates->data[i], result);
+                i++;
+            } else {
+                addToNodeArray(parent_stack, parent);
+                add_to_dstring_array(result_stack, result);
+                parent = candidates->data[i];
+                result = create_dstring("");
+                add_to_intarray(index_stack, i + 1);
+                i = 0;
+                continue;
+            }
+        }
+        if (i >= candidates->elements) {
+            if (parent_stack->elements > 0) {
+                result = html_val(parent, result);
+                concat_dstrings(get_back_da(result_stack), result);
+                result = get_back_da(result_stack);
+                result_stack->elements--;
+                if (parent_stack->elements > 0) {
+                    i = get_back_ia(index_stack);
+                    index_stack->elements--;
+                    parent = get_back_na(parent_stack);
+                    parent_stack->elements--;
+                    continue;
+                }
+            }
+            free(parent_stack->data);
+            free(parent_stack);
+            free(index_stack->data);
+            free(index_stack);
+            struct dstring *final = create_dstring("");
+            append_to_dstring(final, result->data);
+            free_darray(result_stack);
+            return final;
+        }
+    }
+}
 
 char *raw_val(struct Node *node, char *text) {
     char *og = calloc(1, strlen(text) + 100);

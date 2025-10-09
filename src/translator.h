@@ -1,6 +1,8 @@
 //
 // Created by tomek on 7/8/25.
 //
+#include "dstring.h"
+#include "int_array.h"
 #include "parser.h"
 
 #define TRANSLATOR_H
@@ -11,10 +13,10 @@ extern "C" {
 #endif
 
 
-char *to_html(struct Node *narray);
+struct dstring *to_html(struct Node *narray);
 
 char *to_raw(struct Node *narray);
 
 #ifdef __cplusplus
 }
-#endif //TRANSLATOR_H
+#endif // TRANSLATOR_H

@@ -57,6 +57,8 @@ int parse_text(struct Token *tokens, int index, int length, struct narrayInfo *n
 
 struct narrayInfo *createNodeArray(int capacity);
 
+struct Node *get_back_na(struct narrayInfo *array);
+
 void parse_non_terminals(struct narrayInfo *nodes);
 
 void parse_paragraphs(struct narrayInfo *nodes);
