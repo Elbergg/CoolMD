@@ -38,6 +38,9 @@ void add_to_dstring_array(struct dstringArrayInfo *info, struct dstring *dstring
 }
 
 void append_to_dstring(struct dstring *d, const char *data) {
+    if (data == NULL) {
+        return;
+    }
     check_if_cap(d, data);
     // strcat(d->data, data);
 }
