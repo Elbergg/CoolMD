@@ -15,7 +15,7 @@ extern "C" {
 
 struct dstring *to_html(struct Node *narray);
 
-char *to_raw(struct Node *narray);
+struct dstring *to_raw(struct Node *narray);
 
 #ifdef __cplusplus
 }
