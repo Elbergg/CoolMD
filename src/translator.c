@@ -61,9 +61,15 @@ struct dstring *html_val(struct Node *node, struct dstring *result) {
             suffix = create_dstring("");
             break;
     }
-    concat_dstrings(prefix, result);
-    result = prefix;
-    concat_dstrings(result, suffix);
+    struct dstring *temp = create_dstring("");
+    append_to_dstring(temp, prefix->data);
+    append_to_dstring(temp, result->data);
+    append_to_dstring(temp, suffix->data);
+    result->len = 0;
+    append_to_dstring(result, temp->data);
+    free_dstring(prefix);
+    free_dstring(suffix);
+    free_dstring(temp);
     return result;
 }
 
@@ -76,9 +82,15 @@ struct dstring *raw_val(struct Node *node, struct dstring *result) {
     } else {
         suffix = create_dstring("");
     }
-    concat_dstrings(prefix, result);
-    result = prefix;
-    concat_dstrings(result, suffix);
+    struct dstring *temp = create_dstring("");
+    append_to_dstring(temp, prefix->data);
+    append_to_dstring(temp, result->data);
+    append_to_dstring(temp, suffix->data);
+    result->len = 0;
+    append_to_dstring(result, temp->data);
+    free_dstring(prefix);
+    free_dstring(suffix);
+    free_dstring(temp);
     return result;
 }
 
