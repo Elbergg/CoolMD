@@ -40,7 +40,7 @@ TEST(TranslatorTest, HeaderParagraphEmphasisTranslateTest) {
     ASSERT_TRUE(strcmp(result->data, "<h1>Hello</h1><p><em>dzien dobry</em></p>") == 0);
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
 
 TEST(TranslatorTest, Header3ParagraphEmphasisTranslateTest) {
@@ -52,7 +52,7 @@ TEST(TranslatorTest, Header3ParagraphEmphasisTranslateTest) {
     ASSERT_TRUE(strcmp(result->data, "<h3>Hello</h3><p><em>dzien dobry</em></p>") == 0);
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
 
 TEST(TranslatorTest, NoHeaderParagraphEmphasisTranslateTest) {
@@ -64,7 +64,7 @@ TEST(TranslatorTest, NoHeaderParagraphEmphasisTranslateTest) {
     ASSERT_TRUE(strcmp(result->data, "<p>Hello<em>dzien dobry</em></p>") == 0);
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
 
 TEST(TranslatorTest, NoHeaderParagraphBoldTranslateTest) {
@@ -76,7 +76,7 @@ TEST(TranslatorTest, NoHeaderParagraphBoldTranslateTest) {
     ASSERT_TRUE(strcmp(result->data, "<p>Hello<strong>dzien dobry</strong></p>") == 0);
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
 
 TEST(TranslatorTest, NoHeaderParagraphBoldItalicTranslateTest) {
@@ -88,7 +88,7 @@ TEST(TranslatorTest, NoHeaderParagraphBoldItalicTranslateTest) {
     ASSERT_TRUE(strcmp(result->data, "<p>Hello<em><strong>dzien dobry</strong></em></p>") == 0);
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
 
 
@@ -101,7 +101,7 @@ TEST(TranslatorTest, HeadersInNewlinesTest) {
     ASSERT_TRUE(strcmp(result->data, "<h1>Hello</h1><h2>halo</h2>") == 0);
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
 
 TEST(TranslatorTest, ThreeHeadersInNewlinesTest) {
@@ -113,7 +113,7 @@ TEST(TranslatorTest, ThreeHeadersInNewlinesTest) {
     ASSERT_TRUE(strcmp(result->data, "<h1>Hello</h1><h2>halo</h2><h3>balo</h3>") == 0);
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
 
 
@@ -144,5 +144,5 @@ TEST(TranslatorTest, ToRawTest) {
     ASSERT_TRUE(strcmp(result->data, "# _He llo_\n>>HI\n>YO\n>\n>pozdrawiam\n\nmelo melo\n\n>dzien dobry\n\n") == 0);
     free_tarray(info);
     free_narray(narray);
-    free(result);
+    free_dstring(result);
 }
