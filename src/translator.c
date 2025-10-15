@@ -115,13 +115,11 @@ struct dstring *to_format(struct Node *node,
                 concat_dstrings(get_back_da(result_stack), result);
                 result = get_back_da(result_stack);
                 result_stack->elements--;
-                if (parent_stack->elements > 0) {
-                    i = get_back_ia(index_stack);
-                    index_stack->elements--;
-                    parent = get_back_na(parent_stack);
-                    parent_stack->elements--;
-                    continue;
-                }
+                i = get_back_ia(index_stack);
+                index_stack->elements--;
+                parent = get_back_na(parent_stack);
+                parent_stack->elements--;
+                continue;
             }
             free(parent_stack->data);
             free(parent_stack);
