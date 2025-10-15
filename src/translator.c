@@ -68,62 +68,11 @@ struct dstring *html_val(struct Node *node, struct dstring *result) {
 }
 
 
-struct dstring *to_html(struct Node *node) {
-    struct dstringArrayInfo *result_stack = create_dstring_array(10);
-    int i = 0;
-    struct narrayInfo *candidates;
-    struct dstring *result = create_dstring("");
-    struct narrayInfo *parent_stack = createNodeArray(10);
-    intarray *index_stack = create_intarray(10);
-    struct Node *parent = node;
-    add_to_dstring_array(result_stack, result);
-    while (node != NULL) {
-        candidates = parent->children;
-        if (i < candidates->elements && candidates->data[i] != NULL) {
-            if (candidates->data[i]->children == NULL) {
-                result = html_val(candidates->data[i], result);
-                i++;
-            } else {
-                addToNodeArray(parent_stack, parent);
-                add_to_dstring_array(result_stack, result);
-                parent = candidates->data[i];
-                result = create_dstring("");
-                add_to_intarray(index_stack, i + 1);
-                i = 0;
-                continue;
-            }
-        }
-        if (i >= candidates->elements) {
-            if (parent_stack->elements > 0) {
-                result = html_val(parent, result);
-                concat_dstrings(get_back_da(result_stack), result);
-                result = get_back_da(result_stack);
-                result_stack->elements--;
-                if (parent_stack->elements > 0) {
-                    i = get_back_ia(index_stack);
-                    index_stack->elements--;
-                    parent = get_back_na(parent_stack);
-                    parent_stack->elements--;
-                    continue;
-                }
-            }
-            free(parent_stack->data);
-            free(parent_stack);
-            free(index_stack->data);
-            free(index_stack);
-            struct dstring *final = create_dstring("");
-            append_to_dstring(final, result->data);
-            free_darray(result_stack);
-            return final;
-        }
-    }
-}
-
 struct dstring *raw_val(struct Node *node, struct dstring *result) {
     struct dstring *prefix = create_dstring("");
     struct dstring *suffix;
-    if (node->value) {
-        suffix = create_dstring("");
+    if (node->children == NULL && node->value) {
+        suffix = create_dstring(node->value);
     } else {
         suffix = create_dstring("");
     }
@@ -134,7 +83,8 @@ struct dstring *raw_val(struct Node *node, struct dstring *result) {
 }
 
 
-struct dstring *to_raw(struct Node *node) {
+struct dstring *to_format(struct Node *node,
+                          struct dstring * (*format_func)(struct Node *node, struct dstring *result)) {
     struct dstringArrayInfo *result_stack = create_dstring_array(10);
     int i = 0;
     struct narrayInfo *candidates;
@@ -147,7 +97,7 @@ struct dstring *to_raw(struct Node *node) {
         candidates = parent->children;
         if (i < candidates->elements && candidates->data[i] != NULL) {
             if (candidates->data[i]->children == NULL) {
-                result = raw_val(candidates->data[i], result);
+                result = format_func(candidates->data[i], result);
                 i++;
             } else {
                 addToNodeArray(parent_stack, parent);
@@ -161,7 +111,7 @@ struct dstring *to_raw(struct Node *node) {
         }
         if (i >= candidates->elements) {
             if (parent_stack->elements > 0) {
-                result = raw_val(parent, result);
+                result = format_func(parent, result);
                 concat_dstrings(get_back_da(result_stack), result);
                 result = get_back_da(result_stack);
                 result_stack->elements--;
@@ -185,20 +135,12 @@ struct dstring *to_raw(struct Node *node) {
     }
 }
 
-// struct dstring *to_raw(struct Node *node) {
-//     // TODO: USE ITERATION INSTEAD OF RECURSION
-//     if (node->children == NULL) {
-//         return strdup(node->value);
-//     }
-//     // TODO: USE DYNAMIC STRINGS INSTEAD OF THIS
-//     char *result = calloc(1, 1000);
-//     for (int i = 0; i < node->children->elements; i++) {
-//         char *val = to_raw(node->children->data[i]);
-//         result = strcat(result, val);
-//         free(val);
-//     }
-//     char *val = raw_val(node, result);
-//     strcpy(result, val);
-//     free(val);
-//     return result;
-// }
+
+struct dstring *to_html(struct Node *node) {
+    return to_format(node, &html_val);
+}
+
+
+struct dstring *to_raw(struct Node *node) {
+    return to_format(node, &raw_val);
+}
