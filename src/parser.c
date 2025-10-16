@@ -112,7 +112,7 @@ void parse_h1(struct narrayInfo *nodes) {
                     candidates->data[i]->value = strdup("\n");
                     delete_last_n_nodes(info, 1);
                     addToNodeArray(info, headnode);
-                    addToNodeArray(headnode->children, candidates->data[i]);
+                    addToNodeArray(info, candidates->data[i]);
                     continue;
                 }
                 addToNodeArray(headnode->children, candidates->data[i]);
