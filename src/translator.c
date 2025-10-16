@@ -17,7 +17,8 @@ struct dstring *html_val(struct Node *node, struct dstring *result) {
             append_to_dstring(result, node->value);
             return result;
         case PARAGRAPH:
-            prefix = create_dstring("<p>");
+            prefix = create_dstring("<p style=\"margin: 0\">"
+            );
             suffix = create_dstring("</p>");
             break;
         case HEADER1:
